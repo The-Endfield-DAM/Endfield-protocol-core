@@ -2,7 +2,15 @@
 import { fileURLToPath } from 'url'
 
 export default defineNuxtConfig({
+  compatibilityDate: '2025-11-21',
   devtools: { enabled: true },
+
+  runtimeConfig: {
+    public: {
+      // 默认值是本地后端，部署时我们在后台改这个变量覆盖它
+      apiBase: 'http://127.0.0.1:8000'
+    }
+  },
   
   // 注册全局 CSS
   css: [

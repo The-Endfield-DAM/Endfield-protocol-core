@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// 获取配置
+const config = useRuntimeConfig()
 // 1. 先定义接口
 interface Asset {
   id: number
@@ -10,7 +12,8 @@ interface Asset {
 
 // 2. 再请求数据 (只留这一行！)
 // 加入了 { lazy: true } 参数，防止后端没启动时前端卡死
-const { data: assets, pending, error } = await useFetch<Asset[]>('http://127.0.0.1:8000/assets/', {
+const { data: assets, pending, error } = await useFetch<Asset[]>('/assets/', {
+  baseURL: config.public.apiBase, // 让 Nuxt 自动处理前缀
   lazy: true
 })
 </script>
