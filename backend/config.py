@@ -1,23 +1,29 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    # 1. 定义你需要的所有全局变量
+    # 基础信息
     PROJECT_NAME: str = "Endfield Protocol Core"
-    VERSION: str = "1.0.0"
+    VERSION: str = "0.2.0"
     
-    # 3. 允许跨域的白名单 (CORS)
+    # 数据库 (这就强制要求 .env 里必须有 DATABASE_URL，否则报错)
+    DATABASE_URL: str
+    
+    # R2 对象存储
+    R2_ACCESS_KEY_ID: str
+    R2_SECRET_ACCESS_KEY: str
+    R2_BUCKET_NAME: str = "endfield-assets" # 给个默认值
+    R2_ENDPOINT_URL: str
+
+    # CORS
     CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000"
     ]
 
-    # 4. 配置读取规则
     class Config:
         env_file = ".env"
         env_file_encoding = 'utf-8'
+        # 忽略多余的变量 (防止 .env 里有注释导致报错)
+        extra = "ignore"
 
-# ---------------------------------------------------------
-# ⚠️ 报错就是因为缺了下面这一行！
-# 我们必须把类实例化成对象，导出的必须是这个 'settings' 变量
-# ---------------------------------------------------------
 settings = Settings()

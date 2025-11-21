@@ -157,6 +157,13 @@ type: 描述
 
 ## 📅 更新日志 (Changelog)
 
+### [v0.2.1] - Cloud Infrastructure Migration
+> **Time:** 2025-11-21 21:10
+*   **☁️ Database:** 数据库引擎从本地 SQLite 迁移至 **Supabase (PostgreSQL)**，实现云端数据同步。
+*   **🔧 Configuration:** 重构后端配置系统 (`config.py`)，集成 Cloudflare R2 对象存储凭证与云数据库连接串。
+*   **📦 Dependencies:** 新增 `psycopg2-binary` (PG驱动) 与 `boto3` (S3 SDK) 依赖。
+*   **🔒 Security:** 完善环境变量管理，实现敏感密钥与代码库的完全分离。
+
 ### [v0.2.0] - UI/UX Protocol Upgrade
 > **Time:** 2025-11-21 19:30
 *   **✨ New Features:**
