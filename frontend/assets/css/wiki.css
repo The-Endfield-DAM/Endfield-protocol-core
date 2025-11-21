@@ -66,6 +66,29 @@
 @media (max-width: 768px) {
   .wiki-page {
     padding: 20px;
+    /* 增加底部 padding，防止内容被底部导航栏遮挡 */
+    padding-bottom: 80px; 
+  }
+
+  /* --- 🟢 核心修复：头部改为垂直排列 --- */
+  .page-header {
+    flex-direction: column; /* 强制上下排列 */
+    align-items: flex-start; /* 左对齐 */
+    gap: 16px; /* 标题和按钮之间的间距 */
+    padding-bottom: 15px;
+    border-bottom-width: 1px; /* 手机上边框细一点 */
+  }
+
+  .header-title {
+    width: 100%;
+  }
+
+  .refresh-btn {
+    width: 100%; /* 按钮占满全宽 */
+    display: flex;
+    justify-content: center; /* 文字居中 */
+    padding: 12px 0; /* 增加点击区域高度 */
+    background-color: rgba(255, 255, 255, 0.02); /* 给个微弱背景，更像按钮 */
   }
 
   .file-item {

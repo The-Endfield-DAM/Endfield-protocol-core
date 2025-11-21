@@ -18,7 +18,7 @@
 基于《明日方舟：终末地》世界观扩展设计，构建一个集 **3D 资产管理 / 实时监控 / 蓝图交互** 为一体的现代化工业 Web 平台。
 </p>
 
-<p><i>Last Updated: 2025-11-22 02:23 (ChengDu)</i></p>
+<p><i>Last Updated: 2025-11-22 03:13 (ChengDu)</i></p>
 
 </div>
 
@@ -168,8 +168,15 @@ type: 描述
 
 ## 📅 更新日志 (Changelog)
 
+### [v0.3.2.2] - Mobile UI Polish
+> **Time:** 2025-11-22 03:13
+* **🐛 UI Hotfix:**
+    * **Vertical Stacking:** 强制移动端首页标题与筛选 Tabs 上下分行，修复文本重叠问题。
+    * **Touch Target:** 将 Wiki 页面的刷新按钮改为全宽 (Full Width) 布局，避免屏幕边缘截断，并提升触摸体验。
+    * **Spacing:** 增加移动端底部 Padding，防止内容被底部导航栏遮挡。
+
 ### [v0.3.2.1] - Mobile Terminal Adaptation
-> **Time:** 2025-11-22 04:00
+> **Time:** 2025-11-22 03:00
 * **📱 Responsive Design (移动端适配):**
     * **Navigation:** 实现 **Sidebar (侧边栏)** 到 **Bottom Tab Bar (底部导航)** 的形态切换，释放移动端水平空间。
     * **Dashboard:** 优化首页 **Hero Title** 排版，引入自动换行与字号缩放，修复大屏文字截断问题；资产网格在窄屏下自动切换为单列布局。

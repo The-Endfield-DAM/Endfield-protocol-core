@@ -30,29 +30,48 @@
 
 /* ... (复制 index.vue 中其他的 style 内容到这里) ... */
 
-/* 📱 首页移动端适配 */
 @media (max-width: 768px) {
   .hero-section {
-    height: 200px; /* 减小高度 */
-    padding: 0 20px;
+    height: 220px; 
+    padding: 0 24px;
   }
 
   .hero-title {
-    font-size: 32px; /* 减小字号，防止截断 */
-    word-break: break-word; /* 允许换行 */
+    font-size: 36px;
+    word-break: break-word;
+    line-height: 1.1;
   }
 
   .content-wrapper {
-    padding: 20px; /* 减小内边距 */
+    padding: 24px;
+    padding-bottom: 80px; /* 防止底部遮挡 */
   }
 
+  /* --- 🟢 核心修复：区域标题与 Tabs 分行 --- */
   .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    flex-direction: column; /* 上下排列 */
+    align-items: flex-start; /* 左对齐 */
+    gap: 16px; /* 拉开间距 */
+    margin-bottom: 20px;
   }
   
+  .section-header h2 {
+    width: 100%;
+    font-size: 18px;
+    font-weight: 600; /* 手机上加粗一点更清晰 */
+  }
+
+  .filter-tabs {
+    width: 100%;
+    justify-content: flex-start; /* Tabs 从左开始排 */
+    gap: 24px; /* 增加 Tab 之间的间距，防误触 */
+    overflow-x: auto; /* 万一 Tab 太多，允许横向滚动 */
+    white-space: nowrap;
+    padding-bottom: 4px; /* 留出滚动条空间 */
+  }
+
   .asset-grid {
-    grid-template-columns: 1fr; /* 强制单列显示 */
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
