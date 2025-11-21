@@ -1,0 +1,46 @@
+/* 终末地设计语言 - 核心变量 */
+:root {
+  /* --- 品牌色 --- */
+  --c-brand: #FFD700;        /* 终末地黄 */
+  --c-brand-hover: #E6C200;
+  --c-danger: #FF4D4F;       /* 警告红 */
+  --c-success: #4ADE80;      /* 运行绿 */
+  
+  /* --- 背景色体系 --- */
+  --bg-base: #0A0A0A;        /* 极深黑 */
+  --bg-panel: #141414;       /* 面板黑 */
+  --bg-card: #1A1A1A;        /* 卡片黑 */
+  --bg-hover: #252525;       
+  
+  /* --- 线条与边框 --- */
+  --border-light: #333333;
+  --border-focus: #555555;
+  
+  /* --- 文字颜色 --- */
+  --text-main: #E5E5E5;
+  --text-sub: #888888;
+  --text-code: #A3A3A3;
+
+  /* --- 尺寸 --- */
+  --header-height: 60px;
+  --sidebar-width: 240px;
+  
+  /* --- 字体 --- */
+  --font-sans: 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* 全局重置 */
+body {
+  margin: 0;
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--c-brand); }

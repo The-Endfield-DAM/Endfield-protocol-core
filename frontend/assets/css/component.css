@@ -1,0 +1,42 @@
+/* 资产卡片 */
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.asset-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  padding: 24px;
+  transition: transform 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.asset-card:hover {
+  border-color: var(--c-brand);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.card-title {
+  font-size: 18px; font-weight: 600; margin: 0 0 8px 0; color: var(--text-main);
+}
+
+.card-type {
+  font-size: 12px; color: var(--text-sub); background: var(--bg-hover);
+  padding: 2px 8px; display: inline-block;
+}
