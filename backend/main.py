@@ -1,25 +1,37 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+from config import settings
+from database import create_db_and_tables
+from routers import assets  # 导入刚才写的路由
 
-# --- 核心修改：配置跨域中间件 (CORS) ---
-# 这是告诉浏览器：“允许来自 localhost:3000 的请求访问我”
-origins = [
-    "http://localhost:3000",  # 前端开发环境地址
-    "http://127.0.0.1:3000",
-    # 以后上线了，要把你的域名也加在这里，比如 "https://endfield-protocol.vercel.app"
-]
+# --- 生命周期管理 ---
+# 在 App 启动前，自动检查并创建数据库表
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
 
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    lifespan=lifespan # 挂载生命周期
+)
+
+# --- CORS 配置 (保持不变) ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,      # 允许的来源列表
-    allow_credentials=True,     # 允许携带 Cookie
-    allow_methods=["*"],        # 允许所有方法 (GET, POST, PUT, DELETE)
-    allow_headers=["*"],        # 允许所有请求头
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-# ------------------------------------
+
+# --- 注册路由 ---
+# 把 assets 的接口挂载到主程序上
+app.include_router(assets.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Endfield Protocol Backend is Online!"}
+    return {"system": "Endfield Protocol", "status": "Online"}
