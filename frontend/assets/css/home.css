@@ -49,25 +49,37 @@
 
   /* --- 🟢 核心修复：区域标题与 Tabs 分行 --- */
   .section-header {
-    flex-direction: column; /* 上下排列 */
-    align-items: flex-start; /* 左对齐 */
-    gap: 16px; /* 拉开间距 */
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column; /* 垂直排列 */
+    align-items: flex-start;
+    gap: 20px; /* 增加标题和 Tabs 之间的距离 */
+    margin-bottom: 24px;
+    width: 100%;
   }
   
   .section-header h2 {
     width: 100%;
-    font-size: 18px;
-    font-weight: 600; /* 手机上加粗一点更清晰 */
+    margin: 0; /* 清除默认边距 */
+    font-size: 20px; /* 稍微调大一点标题 */
+    line-height: 1.2;
   }
 
   .filter-tabs {
     width: 100%;
-    justify-content: flex-start; /* Tabs 从左开始排 */
-    gap: 24px; /* 增加 Tab 之间的间距，防误触 */
-    overflow-x: auto; /* 万一 Tab 太多，允许横向滚动 */
-    white-space: nowrap;
-    padding-bottom: 4px; /* 留出滚动条空间 */
+    display: flex;
+    flex-wrap: nowrap; /* 禁止换行，保持在一行内滚动 */
+    overflow-x: auto; /* 允许横向滚动 */
+    gap: 30px; /* 拉大 Tab 之间的间距，更易点击 */
+    padding-bottom: 8px; /* 留出滚动条空间 */
+    margin-left: 0; /* 确保左对齐 */
+    
+    /* 隐藏滚动条但保持功能 (Chrome/Safari) */
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* 隐藏滚动条 (兼容性写法) */
+  .filter-tabs::-webkit-scrollbar { 
+    display: none; 
   }
 
   .asset-grid {
