@@ -1,0 +1,214 @@
+/* frontend/assets/css/upload.css */
+
+.upload-page {
+  padding: 40px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+}
+.panel-header h1 { font-weight: 300; letter-spacing: 2px; margin: 0; font-size: 24px; color: var(--text-main); }
+.panel-header .sub { color: var(--c-brand); font-size: 0.5em; font-weight: normal; margin-left: 10px; }
+
+/* --- 布局容器 --- */
+.upload-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  height: 600px;
+  position: relative;
+}
+
+/* --- 左侧拖拽区 --- */
+.drop-zone {
+  height: 100%;
+  border: 2px dashed var(--border-light);
+  background: rgba(255, 255, 255, 0.01);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.drop-zone:hover, .drop-zone.dragging {
+  border-color: var(--c-brand);
+  background: rgba(255, 215, 0, 0.05);
+}
+/* 只有正在上传时才禁用点击，成功后可以点 */
+.drop-zone.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-style: solid;
+  animation: border-pulse 2s infinite;
+}
+.drop-zone.success {
+  border-color: var(--c-success);
+  border-style: solid;
+}
+
+.upload-icon { width: 40px; height: 40px; border: 1px solid var(--c-brand); margin: 0 auto 20px; position: relative; }
+.upload-icon::after { content:''; position:absolute; background:var(--c-brand); width:20px; height:2px; top:50%; left:50%; transform:translate(-50%,-50%); }
+.upload-icon::before { content:''; position:absolute; background:var(--c-brand); width:2px; height:20px; top:50%; left:50%; transform:translate(-50%,-50%); }
+.zone-content { text-align: center; color: var(--text-main); }
+.zone-content h3 { font-family: var(--font-mono); letter-spacing: 1px; margin-bottom: 10px; }
+.zone-content p { color: var(--text-sub); font-size: 0.9rem; }
+
+
+/* --- 右侧：通用监控容器 --- */
+.monitor-wrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  perspective: 1000px;
+}
+
+/* --- A. 待机状态 (Idle) --- */
+.idle-monitor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5; /* 待机时稍微暗一点 */
+}
+
+.idle-diamond-wrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 30px;
+  /* 整体缓慢旋转 */
+  animation: spin-slow 20s linear infinite; 
+}
+
+.idle-diamond {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  border: 1px solid var(--text-sub);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+  /* 呼吸效果 */
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.idle-diamond.inner {
+  width: 60%; height: 60%;
+  top: 20%; left: 20%;
+  border-color: var(--c-brand);
+  animation: breathe 4s ease-in-out infinite reverse; /* 反向呼吸 */
+}
+
+.idle-text {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  color: var(--text-sub);
+  animation: blink-text 2s infinite;
+}
+
+/* --- B. 工作状态 (Active) --- */
+.prts-core {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 背景 PRTS 大字 (调高了透明度) */
+.bg-watermark {
+  position: absolute;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 180px;
+  /* 修改这里：从 0.06 提高到 0.12，亮度翻倍 */
+  color: rgba(255, 255, 255, 0.12); 
+  z-index: 0;
+  display: flex;
+  gap: 0px;
+  user-select: none;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.bg-watermark span {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeText 1s forwards;
+}
+.bg-watermark span:nth-child(1) { animation-delay: 0.2s; }
+.bg-watermark span:nth-child(2) { animation-delay: 0.4s; }
+.bg-watermark span:nth-child(3) { animation-delay: 0.6s; }
+.bg-watermark span:nth-child(4) { animation-delay: 0.8s; }
+
+/* 菱形容器 */
+.diamond-shifter {
+  width: 300px; height: 300px;
+  position: relative; z-index: 10;
+  transform: rotate(0deg) scale(0.8);
+  opacity: 0;
+  animation: enterDiamond 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.diamond-border { fill: none; stroke: #fff; stroke-width: 8; }
+.diamond-fill {
+  /* 修改这里：透明度从 0.8 降到 0.4，看起来更有全息投影的质感 */
+  fill: rgba(255, 215, 0, 0.4);
+  transform-origin: bottom;
+  opacity: 1; /* 这里不需要 opacity 了，直接在 rgba 里控制 */
+  transition: height 0.2s linear;
+}
+/* SVG 翻转，让 height 从下往上长 */
+.diamond-svg {
+  transform: rotate(180deg); 
+  width: 100%; height: 100%;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+}
+
+.core-text {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  text-align: center; width: 200px; color: #fff;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+
+.progress-val { font-size: 64px; font-weight: 900; font-family: var(--font-mono); line-height: 1; }
+.status-text { font-size: 14px; letter-spacing: 4px; margin-top: 10px; color: var(--c-brand); }
+.success-title { font-size: 36px; font-weight: 900; line-height: 1; }
+.success-sub { font-size: 24px; font-weight: 300; color: var(--c-brand); margin-top: 5px; letter-spacing: 2px; }
+
+.rhodes-label {
+  position: absolute; bottom: -40px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 6px; color: var(--text-sub);
+  opacity: 0; animation: fadeIn 1s forwards 1.0s;
+}
+
+/* --- 动画定义 --- */
+@keyframes enterDiamond {
+  0% { opacity: 0; transform: rotate(0deg) scale(0.5); }
+  100% { opacity: 1; transform: rotate(45deg) scale(1.2); }
+}
+@keyframes fadeText { to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes border-pulse { 0%, 100% { border-color: var(--border-light); } 50% { border-color: var(--c-brand); } }
+
+/* 待机动画 */
+@keyframes spin-slow { 100% { transform: rotate(360deg); } }
+@keyframes breathe { 0%, 100% { transform: rotate(45deg) scale(1); opacity: 0.8; } 50% { transform: rotate(45deg) scale(1.1); opacity: 1; } }
+@keyframes blink-text { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* Vue Transition */
+.fade-scale-enter-active { transition: all 0.5s ease; }
+.fade-scale-leave-active { transition: all 0.2s ease; }
+.fade-scale-enter-from { opacity: 0; transform: scale(0.9); }
+.fade-scale-leave-to { opacity: 0; }
+
+@media (max-width: 768px) { .upload-container { grid-template-columns: 1fr; height: auto; } }

@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from config import settings
 from database import create_db_and_tables
-from routers import assets  # 导入刚才写的路由
+from routers import assets,upload
 
 # --- 生命周期管理 ---
 # 在 App 启动前，自动检查并创建数据库表
@@ -31,6 +31,7 @@ app.add_middleware(
 # --- 注册路由 ---
 # 把 assets 的接口挂载到主程序上
 app.include_router(assets.router)
+app.include_router(upload.router)
 
 @app.get("/")
 def read_root():
