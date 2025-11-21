@@ -18,7 +18,7 @@
 基于《明日方舟：终末地》世界观扩展设计，构建一个集 **3D 资产管理 / 实时监控 / 蓝图交互** 为一体的现代化工业 Web 平台。
 </p>
 
-<p><i>Last Updated: 2025-11-22 01:25 (ChengDu)</i></p>
+<p><i>Last Updated: 2025-11-22 02:23 (ChengDu)</i></p>
 
 </div>
 
@@ -167,6 +167,21 @@ type: 描述
 ---
 
 ## 📅 更新日志 (Changelog)
+
+### [v0.3.2] - Database Ecosystem & Archive Protocol
+> **Time:** 2025-11-22 03:30
+* **🗄️ Database Expansion:**
+    * 实装 **Supabase (PostgreSQL)** 完整架构，新增 `files` (协议档案), `profiles` (干员档案), `audit_logs` (审计日志), `blueprints` (构建蓝图) 表结构。
+    * 优化数据库连接池配置 (`pool_pre_ping`, `keepalives`)，彻底修复 Serverless 环境下的 SSL 解密失败与连接断开问题。
+* **📘 Feature: Industrial Wiki:**
+    * 上线 **"协议档案库" (Wiki)** 模块，实现 R2 云端文件的可视化列表展示与下载。
+    * 后端新增 `GET /files/` 与 `POST /files/` 接口，打通 "上传 -> 录入 -> 展示" 的数据全链路闭环。
+* **🎨 Engineering & UI:**
+    * **CSS Architecture:** 完成前端样式重构，实现 CSS 与 Vue 组件的完全分离 (`wiki.css`, `component.css`)，提升代码可维护性。
+    * **UX Optimization:** 优化上传进度条逻辑，新增 `Processing` (数据库写入) 状态反馈，解决签名阶段进度卡死问题。
+* **🐛 Fixes:**
+    * 修复本地开发环境 `.env` 加载导致的 R2 连接阻塞问题。
+    * 补全路由缺口 (`/editor`, `/settings`)，消除 Vue Router 导航警告。
 
 ### [v0.3.1] - Upload Protocol Stabilized
 > **Time:** 2025-11-22 01:25

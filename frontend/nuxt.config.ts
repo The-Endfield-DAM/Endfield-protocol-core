@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     fileURLToPath(new URL('./assets/css/variables.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/layout.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/component.css', import.meta.url)),
-    fileURLToPath(new URL('./assets/css/upload.css', import.meta.url))
+    fileURLToPath(new URL('./assets/css/upload.css', import.meta.url)),
+    fileURLToPath(new URL('./assets/css/wiki.css', import.meta.url))
   ]
 })

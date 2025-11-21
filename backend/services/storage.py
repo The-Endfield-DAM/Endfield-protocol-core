@@ -2,31 +2,42 @@ import boto3
 from botocore.config import Config
 import uuid
 from config import settings
+import sys
 
-# 1. 初始化 S3 客户端 (连接 R2)
-# R2 完美兼容 S3 协议，所以我们用 boto3 库
-s3_client = boto3.client(
-    's3',
-    endpoint_url=settings.R2_ENDPOINT_URL,
-    aws_access_key_id=settings.R2_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY,
-    config=Config(signature_version='s3v4'),
-    region_name='auto' # R2 不区分区域，填 auto 即可
-)
+# --- 🕵️‍♂️ 探针 1: 检查配置是否加载 ---
+print("--- [DEBUG] Storage Service Initializing ---")
+print(f"1. R2_ENDPOINT: {settings.R2_ENDPOINT_URL}")
+print(f"2. R2_BUCKET:   {settings.R2_BUCKET_NAME}")
+# 只打印前几位，防止泄露
+key_sample = settings.R2_ACCESS_KEY_ID[:4] + "***" if settings.R2_ACCESS_KEY_ID else "None"
+print(f"3. ACCESS_KEY:  {key_sample}")
+print("------------------------------------------")
+
+try:
+    # 初始化 S3 客户端
+    s3_client = boto3.client(
+        's3',
+        endpoint_url=settings.R2_ENDPOINT_URL,
+        aws_access_key_id=settings.R2_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY,
+        config=Config(signature_version='s3v4'),
+        region_name='auto'
+    )
+    print("✅ [DEBUG] Boto3 Client Created Successfully")
+except Exception as e:
+    print(f"❌ [DEBUG] Boto3 Init Failed: {e}")
 
 def generate_presigned_post(file_name: str, file_type: str):
     """
     生成上传凭证
-    :param file_name: 原始文件名 (如 'design.png')
-    :param file_type: 文件类型 (如 'image/png')
     """
+    print(f"⚡ [DEBUG] Generating presigned url for: {file_name}")
     try:
-        # 2. 生成唯一文件名 (防止用户上传同名文件覆盖)
-        # 结果类似: uploads/a1b2c3d4-design.png
         unique_name = f"{uuid.uuid4()}-{file_name}"
         object_name = f"uploads/{unique_name}"
 
-        # 3. 向 R2 申请预签名 URL (有效期 1 小时)
+        # 3. 向 R2 申请预签名 URL
+        # ⚠️ 如果 endpoint 不对，或者网络不通，这里可能会卡住
         presigned_url = s3_client.generate_presigned_url(
             'put_object',
             Params={
@@ -36,18 +47,17 @@ def generate_presigned_post(file_name: str, file_type: str):
             },
             ExpiresIn=3600
         )
+        
+        print(f"✨ [DEBUG] URL Generated: {presigned_url[:50]}...")
 
-        # 4. 拼接最终可访问的公开链接
-        # 注意：如果没有绑定自定义域名，这里暂时用 R2 的公共测试域名或 Worker 域名
-        # 现阶段我们先返回 Object Key，以后再配合 Public Domain
         public_url = f"{settings.R2_ENDPOINT_URL}/{settings.R2_BUCKET_NAME}/{object_name}"
 
         return {
-            "upload_url": presigned_url, # 前端往这里 PUT 文件
-            "file_key": object_name,     # 存数据库用的 Key
-            "public_url": public_url     # 下载/预览用的 URL
+            "upload_url": presigned_url,
+            "file_key": object_name,
+            "public_url": public_url
         }
 
     except Exception as e:
-        print(f"❌ R2 Error: {e}")
+        print(f"❌ [DEBUG] R2 Logic Error: {e}")
         return None

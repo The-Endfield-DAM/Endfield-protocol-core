@@ -5,7 +5,7 @@ const config = useRuntimeConfig()
 const fileInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const isUploading = ref(false) // 仅代表正在传输中
-const uploadStatus = ref<'idle' | 'signing' | 'uploading' | 'success' | 'error'>('idle')
+const uploadStatus = ref<'idle' | 'signing' | 'uploading' | 'processing' | 'success' | 'error'>('idle')
 const progress = ref(0)
 const resultUrl = ref('')
 
@@ -13,17 +13,32 @@ const resultUrl = ref('')
 const simulateProgress = () => {
   progress.value = 0
   const interval = setInterval(() => {
-    if (uploadStatus.value === 'uploading') {
-      if (progress.value < 95) {
-        progress.value += Math.random() * 8
+    // 1. 签名阶段 (Signing): 慢速走到 20%
+    if (uploadStatus.value === 'signing') {
+      if (progress.value < 20) {
+        progress.value += 1
       }
-    } else if (uploadStatus.value === 'success') {
+    } 
+    // 2. 上传阶段 (Uploading): 正常走到 90%
+    else if (uploadStatus.value === 'uploading') {
+      if (progress.value < 90) {
+        progress.value += Math.random() * 5 // 稍微调慢一点，避免大文件一下子这就跑满了
+      }
+    }
+    // 3. 处理阶段 (Processing/Database): 走到 99%
+    else if (uploadStatus.value === 'processing') {
+      if (progress.value < 99) {
+        progress.value += 0.5
+      }
+    }
+    // 4. 成功或失败
+    else if (uploadStatus.value === 'success') {
       progress.value = 100
       clearInterval(interval)
     } else if (uploadStatus.value === 'error') {
       clearInterval(interval)
     }
-  }, 150)
+  }, 100) // 稍微加快刷新频率，看起来更丝滑
 }
 
 // --- 核心上传逻辑 ---
@@ -47,33 +62,53 @@ const triggerSelect = () => {
 
 const startUpload = async (file: File) => {
   try {
-    // 重置状态
+    // --- 阶段 1: 签名 ---
     uploadStatus.value = 'signing'
     isUploading.value = true
     progress.value = 0
-    simulateProgress()
+    simulateProgress() // 启动动画
 
-    // 1. 获取签名
     const presignedData = await $fetch(`${config.public.apiBase}/upload/presigned`, {
       method: 'POST',
       body: { filename: file.name, content_type: file.type || 'application/octet-stream' }
     }) as any
 
-    // 2. 直传
-    uploadStatus.value = 'uploading'
+    // --- 阶段 2: 直传 R2 ---
+    uploadStatus.value = 'uploading' // 进度条开始主跑
+    
     await $fetch(presignedData.upload_url, {
       method: 'PUT',
       body: file,
       headers: { 'Content-Type': file.type }
     })
 
-    // 3. 成功
-    uploadStatus.value = 'success'
+    // --- 阶段 3: 录入数据库 (新增状态) ---
+    uploadStatus.value = 'processing' // 进度条进入最后冲刺
+    
+    await $fetch(`${config.public.apiBase}/files/`, {
+      method: 'POST',
+      body: {
+        filename: file.name,
+        r2_key: presignedData.file_key,
+        url: presignedData.public_url,
+        size: file.size,
+        mime_type: file.type,
+        asset_id: null 
+      }
+    })
+
+    // --- 阶段 4: 完成 ---
+    uploadStatus.value = 'success' // 进度条直接满 100%
     resultUrl.value = presignedData.public_url
 
   } catch (err) {
-    console.error(err)
-    uploadStatus.value = 'error'
+    console.error("上传流程崩溃:", err) // 打印详细错误
+    
+    // 🔴 强制切换为错误状态，这会触发 simulateProgress 里的 clearInterval
+    uploadStatus.value = 'error' 
+    
+    // 🔴 (可选) 如果你想在界面上显示具体错误，可以加一个 alert
+    // alert("上传失败，请检查控制台日志") 
   } finally {
     isUploading.value = false
   }
