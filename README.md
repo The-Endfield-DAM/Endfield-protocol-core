@@ -4,6 +4,9 @@
 
 ### // 终末地 · 集成工业协议核心 / 资产管理终端
 
+> 🔴 **Live Demo:** [https://endfield-home.zeabur.app](https://endfield-home.zeabur.app)  
+> *(部署于 Zeabur 硅谷节点，数据实时同步)*
+
 <!-- Status Badges -->
 
 ![Status](https://img.shields.io/badge/System_Status-Online-4ade80?style=flat-square)
@@ -164,6 +167,13 @@ type: 描述
 ---
 
 ## 📅 更新日志 (Changelog)
+
+### [v0.2.2] - Global Deployment & Connectivity
+> **Time:** 2025-11-21 22:10
+*   **🚀 Deployment:** 前后端服务全栈部署至 **Zeabur** (Serverless)，实现公网多端访问。
+*   **🌐 Network:** 配置生产环境 CORS 白名单，打通云端前端 (Zeabur Web) 与后端 (Zeabur API) 的通信链路。
+*   **🔧 Frontend:** 重构 API 调用逻辑，引入 `runtimeConfig` 实现后端地址的动态切换 (自动识别 Local/Prod 环境)。
+*   **📱 Compatibility:** 验证移动端与桌面端响应式布局，工业风 UI 在公网环境下渲染正常。
 
 ### [v0.2.1] - Cloud Infrastructure Migration
 > **Time:** 2025-11-21 21:10
