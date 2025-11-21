@@ -21,6 +21,15 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "https://endfield-home.zeabur.app"  # <--- 新增这一行，注意不要带末尾的斜杠 /
     ]
+
+    app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
     # ---------------------
 
     class Config:
