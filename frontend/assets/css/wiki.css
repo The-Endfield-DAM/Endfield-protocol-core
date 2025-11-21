@@ -62,3 +62,46 @@
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@media (max-width: 768px) {
+  .wiki-page {
+    padding: 20px;
+  }
+
+  .file-item {
+    padding: 12px;
+    flex-wrap: wrap; /* 允许内容换行 */
+  }
+
+  .file-icon {
+    margin-right: 12px;
+  }
+
+  .file-info {
+    width: 60%; /* 限制宽度 */
+  }
+
+  .file-name {
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-meta {
+    font-size: 10px;
+    flex-wrap: wrap;
+  }
+  
+  /* 在手机上隐藏不太重要的信息 (如日期)，只保留大小 */
+  .file-meta span:last-child, 
+  .file-meta .meta-divider:last-of-type {
+    display: none;
+  }
+
+  .download-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+    margin-left: auto; /* 推到最右边 */
+  }
+}

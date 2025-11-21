@@ -25,6 +25,7 @@
   overflow: hidden; /* 隐藏超出的文字 */
   position: relative;
   box-shadow: 4px 0 20px rgba(0,0,0,0.5); /* 增加层级感 */
+  width: var(--sidebar-width-collapsed);
 }
 
 /* 鼠标悬停时展开 */
@@ -139,4 +140,67 @@
   color: rgba(255, 255, 255, 0.02);
   pointer-events: none;
   z-index: 0;
+}
+
+.mobile-only { display: none !important; }
+
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; }
+
+  /* 1. 布局容器改为纵向 */
+  .layout-container {
+    flex-direction: column;
+    background-size: 20px 20px; /* 减小背景纹理 */
+  }
+
+  /* 2. 移动端顶部栏 */
+  .mobile-header {
+    height: 60px;
+    background: rgba(10, 10, 10, 0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+  }
+
+  /* 3. 内容区域调整 */
+  .main-content {
+    padding-top: 60px; /* 留出顶部栏高度 */
+    padding-bottom: 80px; /* 留出底部栏高度 */
+    width: 100%;
+  }
+
+  /* 4. 移动端底部导航栏 */
+  .mobile-tab-bar {
+    height: 64px;
+    background: #111;
+    border-top: 1px solid var(--c-brand); /* 顶部亮条 */
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.8);
+  }
+
+  .tab-item {
+    color: var(--text-sub);
+    padding: 10px;
+    transition: all 0.2s;
+    border-radius: 8px;
+  }
+
+  .tab-item.active {
+    color: #000;
+    background-color: var(--c-brand);
+    transform: translateY(-10px); /* 选中上浮效果 */
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  }
 }
