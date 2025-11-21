@@ -1,81 +1,142 @@
-/* 布局网格 */
+/* 布局容器 */
 .layout-container {
   display: flex;
   height: 100vh;
+  width: 100vw;
   overflow: hidden;
+  background-color: var(--bg-base);
+  /* 添加一点背景纹理，模仿终端屏幕 */
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
-/* 侧边栏 */
+/* --- 侧边栏核心逻辑 --- */
 .sidebar {
-  width: var(--sidebar-width);
+  width: var(--sidebar-width-collapsed); /* 默认收起 */
   background-color: var(--bg-panel);
   border-right: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
-  z-index: 10;
+  justify-content: space-between; /* 顶底对齐 */
+  z-index: 50;
+  transition: width 0.4s var(--transition-smooth); /* 丝滑过渡 */
+  overflow: hidden; /* 隐藏超出的文字 */
+  position: relative;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.5); /* 增加层级感 */
 }
 
+/* 鼠标悬停时展开 */
+.sidebar:hover {
+  width: var(--sidebar-width-expanded);
+}
+
+/* Logo 区域 */
 .logo-area {
-  padding: 0 24px;
-  margin-bottom: 40px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  padding-left: 18px; /* 居中图标 */
+  white-space: nowrap; /* 防止文字换行 */
+}
+
+.logo-icon {
+  width: 28px;
+  height: 28px;
+  background-color: var(--text-main); /* 模拟那个方块Logo */
+  flex-shrink: 0; /* 防止图标被压缩 */
+  margin-right: 16px;
+  mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7L12 12L22 7L12 2Z"/></svg>'); /* 这里简单模拟一个形状 */
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7L12 12L22 7L12 2Z"/></svg>');
 }
 
 .logo-text {
   font-family: var(--font-mono);
   font-weight: 900;
-  font-size: 24px;
+  font-size: 20px;
   color: var(--text-main);
-  letter-spacing: -1px;
+  opacity: 0; /* 收起时隐藏文字 */
+  transition: opacity 0.2s;
+  transform: translateX(-10px);
 }
-.logo-highlight { color: var(--c-brand); }
 
+/* 展开时显示文字 */
+.sidebar:hover .logo-text {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.1s; /* 等宽度变大一点再显示文字 */
+}
+
+/* 导航菜单 */
 .nav-menu {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  padding-top: 20px;
 }
 
 .nav-item {
-  padding: 12px 24px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 18px; /* 图标居中 */
   color: var(--text-sub);
   text-decoration: none;
   font-size: 14px;
   border-left: 3px solid transparent;
+  white-space: nowrap;
   transition: all 0.2s;
+  cursor: pointer;
 }
 
 .nav-item:hover, .nav-item.active {
   background-color: var(--bg-hover);
   color: var(--text-main);
+}
+
+.nav-item.active {
   border-left-color: var(--c-brand);
+}
+
+.nav-icon {
+  flex-shrink: 0;
+  margin-right: 16px;
+}
+
+.nav-label {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.sidebar:hover .nav-label {
+  opacity: 1;
+  transition-delay: 0.1s;
+}
+
+/* 底部功能区 (模仿截图底部的 User / Sound 按钮) */
+.bottom-actions {
+  padding-bottom: 20px;
+  border-top: 1px solid var(--border-light);
 }
 
 /* 主内容区 */
 .main-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
   position: relative;
-  overflow-y: auto; /* 内容滚动 */
+  overflow-y: auto;
+  padding: 0; /* 去掉 padding，让内容全屏 */
 }
 
-.top-header {
-  height: var(--header-height);
-  border-bottom: 1px solid var(--border-light);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  background-color: rgba(10, 10, 10, 0.8); /* 毛玻璃底色 */
-  backdrop-filter: blur(10px);
-  position: sticky;
-  top: 0;
-  z-index: 5;
+/* 一个巨大的背景装饰字，增加丰富度 */
+.bg-decoration {
+  position: fixed;
+  right: -50px;
+  bottom: -50px;
+  font-size: 300px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+  z-index: 0;
 }
-
-.breadcrumb { font-family: var(--font-mono); font-size: 12px; color: var(--text-sub); }
-.user-profile { font-size: 12px; color: var(--c-brand); border: 1px solid var(--border-light); padding: 4px 12px; }
-
-/* 页面容器 */
-.page-view { padding: 32px; }

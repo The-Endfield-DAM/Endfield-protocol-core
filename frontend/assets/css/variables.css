@@ -28,6 +28,13 @@
   /* --- 字体 --- */
   --font-sans: 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --sidebar-width-collapsed: 64px; /* 收起时的宽度 */
+  --sidebar-width-expanded: 260px; /* 展开时的宽度 */
+  --header-height: 0px; /* 官方设计通常没有顶栏，或者顶栏是透明悬浮的，我们先设为0 */
+  
+  /* --- 动画曲线 (贝塞尔曲线，模仿游戏里的机械运动感) --- */
+  --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 全局重置 */

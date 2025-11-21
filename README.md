@@ -15,7 +15,7 @@
 基于《明日方舟：终末地》世界观扩展设计，构建一个集 **3D 资产管理 / 实时监控 / 蓝图交互** 为一体的现代化工业 Web 平台。
 </p>
 
-<p><i>Last Updated: 2025-11-21 18:30 (ChengDu)</i></p>
+<p><i>Last Updated: 2025-11-21 19:30 (ChengDu)</i></p>
 
 </div>
 
@@ -155,6 +155,28 @@ type: 描述
 
 ---
 
+## 📅 更新日志 (Changelog)
+
+### [v0.2.0] - UI/UX Protocol Upgrade
+> **Time:** 2025-11-21 19:30
+*   **✨ New Features:**
+    *   引入 **Lucide Vue** 图标库，实现工业风图标系统。
+    *   新增 **"呼吸式" 侧边栏 (Collapsible Sidebar)**，支持鼠标悬停自动展开/收起交互。
+    *   新增 **Dashboard Hero** 区域，增加动态背景纹理与数据看板。
+*   **💄 UI/UX:**
+    *   重构 CSS 变量系统 (Design Tokens)，统一管理品牌色与尺寸。
+    *   优化布局架构，实现沉浸式全屏布局。
+*   **🐛 Bug Fixes:**
+    *   修复 Windows 环境下 Nuxt 路径别名 (`~`) 解析错误。
+    *   解决前端路由在无后端连接时的阻塞问题 (Lazy Fetch)。
+
+### [v0.1.0] - Architecture Genesis
+> **Time:** 2025-11-21 18:10
+*   **🏗️ Architecture:** 完成前后端分离架构搭建 (Nuxt3 + FastAPI)。
+*   **🔙 Backend:** 集成 SQLModel，实现 SQLite 数据库连接与自动建表。
+*   **🔌 API:** 完成 `POST /assets/` (录入) 和 `GET /assets/` (查询) 接口。
+*   **🎨 Frontend:** 完成首页 UI Demo，实现前后端数据联调。
+*   **🔧 DevOps:** 配置 `.npmrc` 加速国内依赖下载，解决 CORS 跨域限制。
 
 <div align="center">
 <br>
