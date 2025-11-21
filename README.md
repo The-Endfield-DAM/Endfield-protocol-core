@@ -1,10 +1,21 @@
+<div align="center">
+
 # Endfield Industrial Protocol Core
 ### // 终末地集成工业协议 / 资产管理终端
 
-> **System Status:** 🟢 Online (Alpha)  
-> **Last Updated:** 2025-11-21 18:10 (Asia/Shanghai)
+<!-- 这里是一些炫酷的徽章，能瞬间提升项目逼格 -->
+![Status](https://img.shields.io/badge/System_Status-Online-4ade80?style=flat-square)
+![Vue](https://img.shields.io/badge/Frontend-Nuxt_3-00DC82?style=flat-square&logo=nuxt.js)
+![Python](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square&logo=fastapi)
+![Database](https://img.shields.io/badge/Database-SQLModel-2563eb?style=flat-square)
 
-本项目为基于《明日方舟：终末地》世界观衍生的工业资产管理系统（Fan Project）。旨在构建一个集 3D 资产管理、实时数据监控与交互式蓝图构建于一体的现代化 Web 应用。
+<p>
+本项目为基于《明日方舟：终末地》世界观衍生的工业资产管理系统。
+<br>
+旨在构建一个集 3D 资产管理、实时数据监控与交互式蓝图构建于一体的现代化 Web 应用。
+</p>
+
+</div>
 
 ---
 
@@ -23,23 +34,26 @@
 
 ## 🚀 快速开始 (Quick Start)
 
-请各位干员（开发人员）严格按照以下步骤部署本地开发环境。
+请各位干员严格按照以下步骤部署本地开发环境。
 
 ### 1. 环境准备 (Prerequisites)
-- **Node.js:** v20.0.0+ (LTS)
-- **Python:** v3.10+
-- **Git:** 最新版
-- **包管理器:** 请预先安装 pnpm (`npm install -g pnpm`)
+*   **Node.js:** v20.0.0+ (LTS)
+*   **Python:** v3.10+
+*   **Git:** 最新版
+*   **包管理器:** 请预先安装 pnpm
+    ```bash
+    npm install -g pnpm
+    ```
 
 ### 2. 获取代码
 ```bash
 git clone https://github.com/The-Endfield-DAM/Endfield-protocol-core.git
 cd Endfield-protocol-core
 3. 启动后端 (Backend)
-后端运行在 http://127.0.0.1:8000。
+🟢 后端运行端口: 8000
+打开一个新的终端窗口：
 code
 Bash
-# 打开一个新的终端窗口
 cd backend
 
 # 1. 安装依赖
@@ -49,10 +63,10 @@ pip install -r requirements.txt
 python -m uvicorn main:app --reload
 ✅ 验证： 访问 http://127.0.0.1:8000/docs 查看 API 文档。
 4. 启动前端 (Frontend)
-前端运行在 http://127.0.0.1:3000。
+🟢 前端运行端口: 3000
+打开另一个终端窗口：
 code
 Bash
-# 打开另一个终端窗口
 cd frontend
 
 # 1. 安装依赖 (使用 pnpm)
@@ -79,24 +93,17 @@ Endfield-protocol-core/
 ├── .gitignore              # 全局 Git 忽略配置
 └── README.md               # 项目说明书
 ⚠️ 协作规范 (Collaboration Rules)
-为了保证系统的稳定性，请遵守以下协议：
+[!IMPORTANT]
+为了保证系统的稳定性，请务必遵守以下协议：
 分支管理：
 main 分支为受保护分支，严禁直接 Push。
 开发新功能请切出新分支：git checkout -b feat/功能名 (例: feat/login)。
 代码提交：
-提交信息请遵循规范：type: 描述 (例: feat: 新增资产录入接口, fix: 修复CORS跨域问题)。
+提交信息请遵循规范：type: 描述 (例: feat: 新增资产录入接口)。
 合并流程：
 开发完成后，请在 GitHub 发起 Pull Request (PR)。
-等待组长 (Tech Lead) Code Review 通过后方可合并。
-依赖管理：
-前端安装新包：pnpm add 包名。
-后端安装新包：pip install 包名 后，务必执行 pip freeze > requirements.txt 更新依赖表。
-📅 更新日志 (Changelog)
-[v0.1.0] - 2025-11-21
-Architecture: 完成前后端分离架构搭建 (Nuxt3 + FastAPI)。
-Backend: 集成 SQLModel，实现 SQLite 数据库连接与自动建表。
-API: 完成 POST /assets/ (录入) 和 GET /assets/ (查询) 接口。
-Frontend: 完成首页 UI 开发 (终末地工业风格)，实现前后端数据联调。
-DevOps: 配置 .npmrc 加速国内依赖下载，解决 CORS 跨域限制。
-Endfield Industries.
-May the connection be stable.
+等待组长 Code Review 通过后方可合并。
+<div align="center">
+<b>Endfield Industries.</b><br>
+<i>May the connection be stable.</i>
+</div>
