@@ -18,7 +18,7 @@
 基于《明日方舟：终末地》世界观扩展设计，构建一个集 **3D 资产管理 / 实时监控 / 蓝图交互** 为一体的现代化工业 Web 平台。
 </p>
 
-<p><i>Last Updated: 2025-11-21 23:00 (ChengDu)</i></p>
+<p><i>Last Updated: 2025-11-22 01:25 (ChengDu)</i></p>
 
 </div>
 
@@ -167,6 +167,14 @@ type: 描述
 ---
 
 ## 📅 更新日志 (Changelog)
+
+### [v0.3.1] - Upload Protocol Stabilized
+> **Time:** 2025-11-22 01:25
+* **✅ Verification:** 完成公网环境 (Zeabur Public Network) 下的**全链路上传测试**，确认前端直传 Cloudflare R2 云端链路稳定。
+* **🔧 Hotfix:**
+    * 修复容器运行时因 `DATABASE_URL` 环境变量缺失导致的 `pydantic ValidationError` 崩溃循环。
+    * 修正 `config.py` 与 `main.py` 的代码结构冲突，恢复中间件 (Middleware) 的正确挂载顺序。
+    * 精准配置生产环境 CORS 白名单，彻底解决公网域名下的跨域阻断问题。
 
 ### [v0.3.0] - Protocol Transmission Module
 > **Time:** 2025-11-21 23:00
