@@ -14,23 +14,12 @@ class Settings(BaseSettings):
     R2_BUCKET_NAME: str = "endfield-assets"
     R2_ENDPOINT_URL: str
 
-    # --- 🔴 重点修改这里 ---
-    # CORS: 添加你的 Zeabur 前端域名
+    # CORS (这里只定义列表，不要写 app.add_middleware)
     CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "https://endfield-home.zeabur.app"  # <--- 新增这一行，注意不要带末尾的斜杠 /
+        "https://endfield-home.zeabur.app"
     ]
-
-    app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-    # ---------------------
 
     class Config:
         env_file = ".env"
