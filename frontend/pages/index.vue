@@ -23,16 +23,16 @@ const { data: assets, pending, error } = await useFetch<Asset[]>('/assets/', {
     <!-- 模仿官网的 Hero 区域 -->
     <div class="hero-section">
       <div class="hero-content">
-        <h1 class="hero-title">INTEGRATED<br>INDUSTRIAL<br>SYSTEM</h1>
-        <div class="hero-subtitle"> // 终末地集成工业协议 v1.0</div>
+        <h1 class="hero-title">ENDFIELD<br>INDUSTRIAL<br>SYSTEM</h1>
+        <div class="hero-subtitle"> // 终末地集成工业系统</div>
         <div class="hero-stats">
           <div class="stat-item">
-            <div class="stat-val">Online</div>
-            <div class="stat-label">System Status</div>
+            <div class="stat-val">Welcome,</div>
+            <div class="stat-label">Endministrator.</div>
           </div>
           <div class="stat-item">
-            <div class="stat-val">42ms</div>
-            <div class="stat-label">Latency</div>
+            <div class="stat-val">Status:</div>
+            <div class="stat-label">Active</div>
           </div>
         </div>
       </div>
@@ -43,7 +43,7 @@ const { data: assets, pending, error } = await useFetch<Asset[]>('/assets/', {
     <!-- 下方的内容区域 -->
     <div class="content-wrapper">
       <div class="section-header">
-        <h2>ASSETS_OVERVIEW</h2>
+        <h2>概览</h2>
         <div class="filter-tabs">
           <span class="tab active">ALL</span>
           <span class="tab">ACTIVE</span>

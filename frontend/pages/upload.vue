@@ -131,7 +131,7 @@ const startUpload = async (file: File) => {
 <template>
   <div class="upload-page">
     <div class="panel-header">
-      <h1>PROTOCOL_UPLOAD <span class="sub">// 协议传输</span></h1>
+      <h1>UPLOAD <span class="sub">// 协议传输</span></h1>
     </div>
 
     <div class="upload-container">
@@ -163,7 +163,7 @@ const startUpload = async (file: File) => {
           <!-- 状态：空闲 -->
           <template v-else>
             <h3>INITIATE UPLOAD</h3>
-            <p>Drop blueprint files or click to browse</p>
+            <p>拖拽文件到上传框或点击选择文件上传</p>
           </template>
         </div>
       </div>
