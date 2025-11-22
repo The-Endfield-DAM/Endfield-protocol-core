@@ -1,3 +1,5 @@
+/* frontend/assets/css/layout.css */
+
 /* 布局容器 */
 .layout-container {
   display: flex;
@@ -25,7 +27,9 @@
   overflow: hidden; /* 隐藏超出的文字 */
   position: relative;
   box-shadow: 4px 0 20px rgba(0,0,0,0.5); /* 增加层级感 */
-  width: var(--sidebar-width-collapsed);
+  
+  /* 🟢 核心修改：增加顶部内边距，让 Logo 下移 */
+  padding-top: 30px; 
 }
 
 /* 鼠标悬停时展开 */
@@ -35,21 +39,35 @@
 
 /* Logo 区域 */
 .logo-area {
-  height: 80px;
+  height: 60px; /* 稍微减小高度，因为 padding 已经给了空间 */
   display: flex;
   align-items: center;
-  padding-left: 18px; /* 居中图标 */
-  white-space: nowrap; /* 防止文字换行 */
+  padding-left: 14px; /* 稍微调整左边距以对齐新图标 */
+  white-space: nowrap; 
+  margin-bottom: 20px; /* 增加与导航菜单的间距 */
 }
 
+/* 🟢 核心修改：Logo 图标替换 */
 .logo-icon {
-  width: 28px;
+  /* 调整宽高比例以适应辐射标志 */
+  width: 42px;  
   height: 28px;
-  background-color: var(--text-main); /* 模拟那个方块Logo */
-  flex-shrink: 0; /* 防止图标被压缩 */
-  margin-right: 16px;
-  mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7L12 12L22 7L12 2Z"/></svg>'); /* 这里简单模拟一个形状 */
-  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7L12 12L22 7L12 2Z"/></svg>');
+  
+  /* 使用品牌黄 */
+  background-color: var(--c-brand); 
+  flex-shrink: 0; 
+  margin-right: 12px;
+  
+  /* 使用 CSS Mask 引入物理 PNG 图片 */
+  -webkit-mask-image: url('/images/deco.e59de0.png');
+  mask-image: url('/images/deco.e59de0.png');
+  
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .logo-text {
@@ -75,7 +93,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 .nav-item {
@@ -116,7 +134,7 @@
   transition-delay: 0.1s;
 }
 
-/* 底部功能区 (模仿截图底部的 User / Sound 按钮) */
+/* 底部功能区 */
 .bottom-actions {
   padding-bottom: 20px;
   border-top: 1px solid var(--border-light);
@@ -142,8 +160,12 @@
   z-index: 0;
 }
 
+/* 移动端辅助类 */
 .mobile-only { display: none !important; }
 
+/* =========================================
+   📱 移动端适配 (Max Width 768px)
+   ========================================= */
 @media (max-width: 768px) {
   .desktop-only { display: none !important; }
   .mobile-only { display: flex !important; }
@@ -167,6 +189,23 @@
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
+  }
+
+  /* 移动端顶部栏也需要同步更新 Logo */
+  .mobile-header .logo-icon {
+    /* 保持与桌面端一致的样式 */
+    width: 36px;  
+    height: 24px;
+    background-color: var(--c-brand);
+    margin-right: 10px;
+    -webkit-mask-image: url('/images/prtslogo.png');
+    mask-image: url('/images/prtslogo.png');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
   }
 
   /* 3. 内容区域调整 */
