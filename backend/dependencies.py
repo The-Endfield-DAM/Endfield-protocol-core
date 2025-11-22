@@ -4,7 +4,7 @@ from jose import jwt, JWTError
 from config import settings
 from sqlmodel import Session
 from database import get_session
-from models import Profile
+from models import Profile, Tempop
 
 # 定义认证模式 (Bearer Token)
 security = HTTPBearer()
@@ -18,32 +18,27 @@ async def get_current_user(
     session: Session = Depends(get_session)
 ):
     """
-    验证 Token 并返回当前用户的 Profile 信息
+    验证 Token 并返回当前用户 (可能是 Profile 或 Tempop)
     """
     try:
-        # 这里有两个方案：
-        # 方案 A (标准): 在本地用 JWT_SECRET 解码 Token (速度快，需要配置)
-        # 方案 B (简单): 调用 Supabase 的 /auth/v1/user 接口验证 (代码少，无需密钥)
-        
-        # 我们先采用方案 A 的简化版：假设 Supabase 网关已经验证了签名
-        # 在这里我们只解码 payload 获取 user_id (sub)
-        # ⚠️ 正式生产环境必须验证签名！
-        
         payload = jwt.get_unverified_claims(token.credentials)
         user_id = payload.get("sub")
         
         if not user_id:
             raise HTTPException(status_code=401, detail="Invalid authentication credentials")
             
-        # 从数据库查询该用户的档案
-        user_profile = session.get(Profile, user_id)
+        # 🟢 逻辑升级：先查正式干员表
+        user = session.get(Profile, user_id)
         
-        if not user_profile:
-            # 可能是新注册用户还在 tempop 表，或者尚未建立档案
-            # 这里可以抛出异常，或者返回一个临时对象
-            raise HTTPException(status_code=403, detail="Profile not found (Access Denied)")
+        # 🟢 如果不是正式干员，再查普通干员表 (Tempop)
+        if not user:
+            user = session.get(Tempop, user_id)
+
+        # 🟢 如果两边都没有，才报错
+        if not user:
+            raise HTTPException(status_code=403, detail="User not found in database")
             
-        return user_profile
+        return user
 
     except JWTError:
         raise HTTPException(

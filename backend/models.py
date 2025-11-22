@@ -44,7 +44,7 @@ class File(SQLModel, table=True):
     
     # 外键关联
     asset_id: Optional[int] = Field(default=None, foreign_key="asset.id")
-    uploader_id: Optional[UUID] = Field(default=None, foreign_key="profiles.id")
+    uploader_id: Optional[UUID] = Field(default=None)
     
     filename: str
     r2_key: str      # R2 中的唯一键
@@ -55,7 +55,7 @@ class File(SQLModel, table=True):
 
     # 关联对象
     asset: Optional[Asset] = Relationship(back_populates="files")
-    uploader: Optional[Profile] = Relationship(back_populates="files")
+    # uploader: Optional[Profile] = Relationship(back_populates="files")
 
 
 # --- 4. 审计日志 (AuditLog) ---

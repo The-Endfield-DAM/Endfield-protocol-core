@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Union
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session,select,desc
 from database import get_session
-from models import File, Profile
+from models import File, Profile, Tempop
 from dependencies import get_current_user
 
 router = APIRouter(
@@ -35,17 +35,24 @@ def create_file_record(
 @router.get("/", response_model=List[File])
 def read_files(
     session: Session = Depends(get_session),
-    current_user: Profile = Depends(get_current_user) # 🔐 强制要求登录
+    # 🟢 current_user 可能是 Profile 也可能是 Tempop
+    current_user: Union[Profile, Tempop] = Depends(get_current_user) 
 ):
     """
-    获取文件列表 (已实现权限隔离)
+    获取文件列表 (权限分级：管理员看所有，普通用户看自己)
     """
-    # 1. 如果是管理员，查看所有文件
-    if current_user.role == "admin":
-        statement = select(File).order_by(desc(File.created_at))
     
-    # 2. 如果是普通干员，只查看自己的文件
+    # 1. 检查是否是管理员 (只有 Profile 表里才有 role 字段)
+    is_admin = False
+    if isinstance(current_user, Profile) and current_user.role == "admin":
+        is_admin = True
+
+    # 2. 分级查询
+    if is_admin:
+        # 管理员：上帝视角
+        statement = select(File).order_by(desc(File.created_at))
     else:
+        # 普通用户 (Tempop 或 普通Profile)：只能看自己的
         statement = select(File).where(File.uploader_id == current_user.id).order_by(desc(File.created_at))
         
     results = session.exec(statement).all()
