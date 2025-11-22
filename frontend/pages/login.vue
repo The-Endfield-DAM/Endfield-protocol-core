@@ -88,7 +88,7 @@ const handleAuth = async () => {
 
     <div class="login-card">
       <div class="input-group">
-        <label class="input-label">IDENTITY (EMAIL)/</label>
+        <label class="input-label">U S E R N A M E/</label>
         <input 
           type="text" 
           v-model="username"
@@ -98,7 +98,7 @@ const handleAuth = async () => {
         >
       </div>
       <div class="input-group">
-        <label class="input-label">Rb_SECRET/</label>
+        <label class="input-label">P A S S W O R D/</label>
         <input 
           type="password" 
           v-model="password"

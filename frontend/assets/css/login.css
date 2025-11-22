@@ -173,8 +173,8 @@
 @media (max-width: 768px) {
   /* 1. 卡片适配：留出呼吸空间 */
   .login-card {
-    width: 85%; /* 左右留出边距，不再贴边 */
-    padding: 40px 24px 140px 24px; /* 减小内边距，增加内容展示区 */
+    width: 80%; /* 左右留出边距，不再贴边 */
+    padding: 40px 20px 135px 20px; /* 减小内边距，增加内容展示区 */
     box-shadow: 0 20px 50px rgba(0,0,0,0.9); /* 调整阴影 */
   }
 

@@ -1,5 +1,9 @@
 /* frontend/assets/css/layout.css */
 
+/* =========================================
+   🖥️ 桌面端布局 (Desktop Layout)
+   ========================================= */
+
 /* 布局容器 */
 .layout-container {
   display: flex;
@@ -7,61 +11,63 @@
   width: 100vw;
   overflow: hidden;
   background-color: var(--bg-base);
-  /* 添加一点背景纹理，模仿终端屏幕 */
+  /* 背景纹理：细微的网格 */
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
-/* --- 侧边栏核心逻辑 --- */
+/* --- 侧边栏核心 --- */
 .sidebar {
-  width: var(--sidebar-width-collapsed); /* 默认收起 */
+  width: var(--sidebar-width-collapsed); /* 默认收起宽度 */
   background-color: var(--bg-panel);
   border-right: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 顶底对齐 */
+  justify-content: space-between;
   z-index: 50;
-  transition: width 0.4s var(--transition-smooth); /* 丝滑过渡 */
-  overflow: hidden; /* 隐藏超出的文字 */
+  transition: width 0.4s var(--transition-smooth); /* 丝滑伸缩 */
+  overflow: hidden;
   position: relative;
-  box-shadow: 4px 0 20px rgba(0,0,0,0.5); /* 增加层级感 */
+  box-shadow: 4px 0 20px rgba(0,0,0,0.5);
   
-  /* 🟢 核心修改：增加顶部内边距，让 Logo 下移 */
-  padding-top: 30px; 
+  /* 🟢 核心优化：增加顶部留白，避免Logo顶到头 */
+  padding-top: 32px; 
 }
 
-/* 鼠标悬停时展开 */
+/* 鼠标悬停展开 */
 .sidebar:hover {
   width: var(--sidebar-width-expanded);
 }
 
-/* Logo 区域 */
+/* --- Logo 区域 --- */
 .logo-area {
-  height: 60px; /* 稍微减小高度，因为 padding 已经给了空间 */
+  height: 48px; /* 固定高度 */
   display: flex;
   align-items: center;
-  padding-left: 14px; /* 稍微调整左边距以对齐新图标 */
+  padding-left: 18px; /* 图标左对齐 */
   white-space: nowrap; 
-  margin-bottom: 20px; /* 增加与导航菜单的间距 */
+  margin-bottom: 40px; /* 与下方菜单拉开距离 */
+  overflow: hidden; /* 防止收起时文字溢出 */
 }
 
-/* 🟢 核心修改：Logo 图标替换 */
+/* Logo 图标 (使用遮罩技术变色) */
 .logo-icon {
-  /* 调整宽高比例以适应辐射标志 */
-  width: 42px;  
+  /* 固定尺寸，确保收起时刚好显示 */
+  width: 28px;  
   height: 28px;
   
-  /* 使用品牌黄 */
+  /* 这里的背景色决定了 Logo 的颜色 */
   background-color: var(--c-brand); 
   flex-shrink: 0; 
-  margin-right: 12px;
+  margin-right: 16px;
   
-  /* 使用 CSS Mask 引入物理 PNG 图片 */
-  -webkit-mask-image: url('/images/deco.e59de0.png');
-  mask-image: url('/images/deco.e59de0.png');
+  /* 遮罩图片路径 */
+  -webkit-mask-image: url('/images/prtslogo.png');
+  mask-image: url('/images/prtslogo.png');
   
+  /* 遮罩设置：居中、包含、不重复 */
   -webkit-mask-size: contain;
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
@@ -70,37 +76,42 @@
   mask-position: center;
 }
 
+/* Logo 文字 */
 .logo-text {
   font-family: var(--font-mono);
   font-weight: 900;
   font-size: 20px;
   color: var(--text-main);
-  opacity: 0; /* 收起时隐藏文字 */
-  transition: opacity 0.2s;
-  transform: translateX(-10px);
+  opacity: 0; /* 默认隐藏 */
+  transform: translateX(-20px);
+  transition: all 0.3s ease;
+
+  line-height: 1;        /* 消除文字上下的隐形间距 */
+  position: relative;    /* 为微调做准备 */
+  top: 2px;
+  left: -8px;              /* 如果觉得文字偏高，改成 1px 或 2px；如果偏低，改成 -1px */
 }
 
 /* 展开时显示文字 */
 .sidebar:hover .logo-text {
   opacity: 1;
   transform: translateX(0);
-  transition-delay: 0.1s; /* 等宽度变大一点再显示文字 */
+  transition-delay: 0.1s;
 }
 
-/* 导航菜单 */
+/* --- 导航菜单 --- */
 .nav-menu {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-top: 10px;
 }
 
 .nav-item {
   height: 48px;
   display: flex;
   align-items: center;
-  padding: 0 18px; /* 图标居中 */
+  padding: 0 20px; /* 图标居中 */
   color: var(--text-sub);
   text-decoration: none;
   font-size: 14px;
@@ -116,7 +127,7 @@
 }
 
 .nav-item.active {
-  border-left-color: var(--c-brand);
+  border-left-color: var(--c-brand); /* 选中时左侧亮条 */
 }
 
 .nav-icon {
@@ -134,21 +145,22 @@
   transition-delay: 0.1s;
 }
 
-/* 底部功能区 */
+/* --- 底部功能区 --- */
 .bottom-actions {
   padding-bottom: 20px;
   border-top: 1px solid var(--border-light);
+  padding-top: 10px;
 }
 
-/* 主内容区 */
+/* --- 主内容区 --- */
 .main-content {
   flex: 1;
   position: relative;
   overflow-y: auto;
-  padding: 0; /* 去掉 padding，让内容全屏 */
+  padding: 0;
 }
 
-/* 一个巨大的背景装饰字，增加丰富度 */
+/* 背景装饰大字 */
 .bg-decoration {
   position: fixed;
   right: -50px;
@@ -160,8 +172,9 @@
   z-index: 0;
 }
 
-/* 移动端辅助类 */
+/* 辅助类：隐藏移动端元素 */
 .mobile-only { display: none !important; }
+
 
 /* =========================================
    📱 移动端适配 (Max Width 768px)
@@ -170,34 +183,33 @@
   .desktop-only { display: none !important; }
   .mobile-only { display: flex !important; }
 
-  /* 1. 布局容器改为纵向 */
+  /* 1. 布局改为纵向 */
   .layout-container {
     flex-direction: column;
-    background-size: 20px 20px; /* 减小背景纹理 */
+    background-size: 20px 20px;
   }
 
   /* 2. 移动端顶部栏 */
   .mobile-header {
     height: 60px;
-    background: rgba(10, 10, 10, 0.9);
+    background: rgba(10, 10, 10, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-light);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 24px;
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
   }
 
-  /* 移动端顶部栏也需要同步更新 Logo */
+  /* 同步 Logo 样式 */
   .mobile-header .logo-icon {
-    /* 保持与桌面端一致的样式 */
-    width: 36px;  
-    height: 24px;
+    width: 32px;  
+    height: 32px;
     background-color: var(--c-brand);
-    margin-right: 10px;
+    margin-right: 12px;
     -webkit-mask-image: url('/images/prtslogo.png');
     mask-image: url('/images/prtslogo.png');
     -webkit-mask-size: contain;
@@ -206,20 +218,23 @@
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
+
+    transform: translateY(15px); 
+    flex-shrink: 0; /* 防止被挤压变形 */
   }
 
-  /* 3. 内容区域调整 */
+  /* 3. 内容区避让顶部和底部 */
   .main-content {
-    padding-top: 60px; /* 留出顶部栏高度 */
-    padding-bottom: 80px; /* 留出底部栏高度 */
+    padding-top: 60px;
+    padding-bottom: 80px;
     width: 100%;
   }
 
-  /* 4. 移动端底部导航栏 */
+  /* 4. 底部导航栏 */
   .mobile-tab-bar {
     height: 64px;
     background: #111;
-    border-top: 1px solid var(--c-brand); /* 顶部亮条 */
+    border-top: 1px solid var(--c-brand);
     position: fixed;
     bottom: 0; left: 0; right: 0;
     z-index: 100;
@@ -232,14 +247,14 @@
   .tab-item {
     color: var(--text-sub);
     padding: 10px;
-    transition: all 0.2s;
     border-radius: 8px;
+    transition: all 0.2s;
   }
 
   .tab-item.active {
     color: #000;
     background-color: var(--c-brand);
-    transform: translateY(-10px); /* 选中上浮效果 */
+    transform: translateY(-10px);
     box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
   }
 }
