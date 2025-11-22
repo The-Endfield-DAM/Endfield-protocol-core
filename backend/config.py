@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     R2_BUCKET_NAME: str = "endfield-assets"
     R2_ENDPOINT_URL: str
 
+    SUPABASE_URL: str
+    SUPABASE_KEY: str
+
     # CORS (这里只定义列表，不要写 app.add_middleware)
     CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
