@@ -18,7 +18,7 @@
 基于《明日方舟：终末地》世界观扩展设计，构建一个集 **3D 资产管理 / 实时监控 / 蓝图交互** 为一体的现代化工业 Web 平台。
 </p>
 
-<p><i>Last Updated: 2025-11-22 03:13 (ChengDu)</i></p>
+<p><i>Last Updated: 2025-11-23 01:31 (ChengDu)</i></p>
 
 </div>
 
@@ -167,6 +167,30 @@ type: 描述
 ---
 
 ## 📅 更新日志 (Changelog)
+
+### [v0.4.1.0] - Access & Media Patch
+> **Time:** 2025-11-23 01:31
+*   **🔗 Data Binding & Permission (数据绑定与权限松绑):**
+    *   **功能:** 实现普通用户 (Tempop) 与正式干员 (Profile) 的文件上传归属绑定，确保“谁传的谁能看”。
+    *   **方法:** 移除数据库 files 表对 profiles 的外键强约束；后端 POST /files/ 接口自动从 Token 解析并绑定 uploader_id；鉴权依赖 (dependencies.py) 升级为支持多表身份查询。
+*   **🎵 Secure Media Stream (安全媒体流):**
+    *   **功能:** 修复 R2 私有存储桶音频无法播放的问题 (403 Forbidden)。
+    *   **方法:** 后端新增 Presigned GET URL 生成逻辑，在返回文件列表时动态将被动地址替换为带签名的临时访问链接。
+*   **🎧 Seamless Playback & Auto-Play (无缝播放体验):**
+    *   **功能:** 实现登录/注册后 BGM 自动播放，且切换页面不中断。
+    *   **方法:**
+        *   重构布局 (default.vue) 使用 v-show 替代 v-if 以维持播放器组件活性。
+        *   移除登录页阻塞式 alert，确保用户点击事件能直接触发 audio.play()。
+        *   优化 SidebarPlayer 组件的 load() 重载机制，解决切歌无声问题。
+*   **💄 UI Polish (界面微调):**
+    *   **功能:** 优化侧边栏播放器在收起/展开状态下的布局表现。
+    *   **方法:**
+        *   重写 .mini-player 样式，收起时仅居中显示播放按钮，隐藏文本与光盘图标。
+        *   展开时文本区域平滑滑出 (transition: width/opacity)。
+        *   侧边栏顶部 Logo 布局下移，增加呼吸感。
+*   **⚡ Client-Side Rendering (CSR 优化):**
+    *   **功能:** 彻底解决 Wiki 页面刷新时的 401/403 报错与水合不匹配问题。
+    *   **方法:** 对鉴权强相关页面 (wiki.vue) 强制禁用 SSR (server: false)，并使用 onRequest 拦截器动态注入 Token。
 
 ### [v0.4.0] - Security & Access Control Protocol
 > **Time:** 2025-11-22 17:18

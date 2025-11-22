@@ -3,6 +3,7 @@ import {
   Activity, UploadCloud, Box, Settings, User, Volume2, Layers, LogOut 
 } from 'lucide-vue-next'
 
+const { resetPlayer } = usePlayer()
 const route = useRoute()
 const user = useSupabaseUser() // 获取当前用户信息
 const supabase = useSupabaseClient() // 获取操作客户端
@@ -17,6 +18,10 @@ const handleLogout = async () => {
 
   try {
     await supabase.auth.signOut()
+    
+    // 🟢 新增：登出时重置播放器，防止脏数据残留
+    resetPlayer()
+    
     navigateTo('/login')
   } catch (error) {
     console.error('Logout failed:', error)
@@ -28,7 +33,7 @@ const handleLogout = async () => {
   <div class="layout-container">
     <div v-if="!isAuthPage" class="bg-decoration">ENDFIELD</div>
 
-    <aside v-if="!isAuthPage" class="sidebar desktop-only">
+    <aside v-show="!isAuthPage" class="sidebar desktop-only">
       <div class="logo-area">
         <div class="logo-icon" style="background: var(--c-brand);"></div>
         <div class="logo-text">END<span style="color: var(--c-brand)">FIELD</span></div>
@@ -53,6 +58,10 @@ const handleLogout = async () => {
         </NuxtLink>
       </nav>
 
+      <div style="margin-top: auto;">
+        <SidebarPlayer />
+      </div>
+
       <div class="bottom-actions">
         <div v-if="user" class="nav-item" @click="handleLogout">
           <LogOut class="nav-icon" :size="20" />
@@ -71,7 +80,7 @@ const handleLogout = async () => {
       </div>
     </aside>
 
-    <header v-if="!isAuthPage" class="mobile-header mobile-only">
+    <header v-show="!isAuthPage" class="mobile-header mobile-only">
       <div class="logo-area">
         <div class="logo-icon" style="background: var(--c-brand);"></div>
         <div class="logo-text">END<span style="color: var(--c-brand)">FIELD</span></div>
@@ -89,7 +98,7 @@ const handleLogout = async () => {
       <slot />
     </main>
 
-    <nav v-if="!isAuthPage" class="mobile-tab-bar mobile-only">
+    <nav v-show="!isAuthPage" class="mobile-tab-bar mobile-only">
       <NuxtLink to="/" class="tab-item" active-class="active"><Activity :size="24" /></NuxtLink>
       <NuxtLink to="/upload" class="tab-item" active-class="active"><UploadCloud :size="24" /></NuxtLink>
       <NuxtLink to="/wiki" class="tab-item" active-class="active"><Layers :size="24" /></NuxtLink>

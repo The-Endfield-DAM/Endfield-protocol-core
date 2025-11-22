@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileText, Image, Box, Download } from 'lucide-vue-next'
+import { FileText, Image, Box, Download, PlayCircle } from 'lucide-vue-next'
 
 const props = defineProps<{
   filename: string
@@ -24,10 +24,23 @@ const getIcon = () => {
   if (props.mimeType?.includes('model')) return Box
   return FileText
 }
+
+const { play, currentTrack, isPlaying } = usePlayer()
+
+// 判断是否为媒体文件
+const isMedia = computed(() => {
+  return props.mimeType?.startsWith('audio/') || props.mimeType?.startsWith('video/')
+})
+
+// 判断是否正在播放当前文件
+const isCurrentPlaying = computed(() => {
+  return isMedia.value && currentTrack.value === props.url && isPlaying.value
+})
 </script>
 
 <template>
-  <div class="file-item">
+  <div class="file-item" :class="{ 'playing': isCurrentPlaying }">
+    
     <div class="file-icon">
       <component :is="getIcon()" :size="20" />
     </div>
@@ -43,9 +56,20 @@ const getIcon = () => {
       </div>
     </div>
 
-    <a :href="url" target="_blank" class="download-btn">
-      <Download :size="18" />
-      <span>ACCESS</span>
-    </a>
+    <div class="actions">
+      <button 
+        v-if="isMedia" 
+        class="action-btn play-btn" 
+        @click="play(url)"
+        :title="isCurrentPlaying ? 'Pause' : 'Play BGM'"
+      >
+        <PlayCircle :size="18" :fill="isCurrentPlaying ? 'var(--c-brand)' : 'none'" />
+      </button>
+
+      <a :href="url" target="_blank" class="action-btn download-btn">
+        <Download :size="18" />
+        <span>ACCESS</span>
+      </a>
+    </div>
   </div>
 </template>

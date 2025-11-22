@@ -107,3 +107,133 @@
   border-color: var(--c-brand);
   background: rgba(0, 0, 0, 0.3);
 }
+
+.mini-player {
+  margin: 0 14px 20px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-light);
+  padding: 12px; /*稍微增加一点点击区域*/
+  display: flex;
+  align-items: center;
+  
+  /* 🟢 核心修改：默认主轴居中，确保收起时播放按钮在正中间 */
+  justify-content: center; 
+  
+  transition: all 0.3s;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* 展开状态：切换为两端对齐，给信息区腾出位置 */
+.sidebar:hover .mini-player {
+  justify-content: space-between;
+  padding: 10px; /* 展开时稍微收紧一点 padding */
+}
+
+.mini-player:hover {
+  border-color: var(--c-brand);
+  background: rgba(255, 215, 0, 0.05);
+}
+
+/* 🟢 核心修改：信息区（光盘+文字）默认完全折叠 */
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  /* 折叠状态 */
+  width: 0;
+  opacity: 0;
+  overflow: hidden; /* 裁剪内容 */
+  visibility: hidden; /* 彻底隐藏，不挡鼠标 */
+  
+  transition: all 0.3s var(--transition-smooth);
+}
+
+/* 展开状态：滑出显示 */
+.sidebar:hover .player-info {
+  width: 140px; /* 恢复宽度 */
+  opacity: 1;
+  visibility: visible;
+  margin-right: auto; /* 挤开右侧按钮 */
+}
+
+/* 光盘图标 */
+.disk-icon {
+  flex-shrink: 0;
+  color: var(--text-sub);
+  transition: color 0.3s;
+}
+.mini-player:hover .disk-icon { color: var(--c-brand); }
+
+/* 旋转动画 */
+.spinning { animation: spin 4s linear infinite; }
+
+/* 文本区域 */
+.track-status {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap; /* 防止换行 */
+}
+
+.label {
+  font-size: 10px;
+  color: var(--text-sub);
+  font-family: var(--font-mono);
+  line-height: 1.2;
+}
+
+.status {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  line-height: 1.2;
+}
+
+/* 播放按钮 */
+.control-btn {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, color 0.2s;
+}
+.control-btn:hover { 
+  color: var(--c-brand); 
+  transform: scale(1.1);
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* --- 下方依然保留 FileListItem 用到的 actions 样式 --- */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto; 
+}
+.action-btn {
+  display: flex;
+  align-items: center;
+  color: var(--text-sub);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 8px;
+  transition: all 0.2s;
+}
+.action-btn:hover { 
+  color: var(--c-brand); 
+  border-color: var(--c-brand); 
+  background: rgba(255, 215, 0, 0.1);
+}
+.file-item.playing {
+  border-color: var(--c-brand);
+  background: rgba(255, 215, 0, 0.08);
+}

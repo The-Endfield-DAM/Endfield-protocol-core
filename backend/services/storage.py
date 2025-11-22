@@ -61,3 +61,22 @@ def generate_presigned_post(file_name: str, file_type: str):
     except Exception as e:
         print(f"❌ [DEBUG] R2 Logic Error: {e}")
         return None
+
+def generate_presigned_url(object_name: str, expiration=3600):
+    """
+    生成临时的下载/访问链接 (GET)
+    解决 R2 私有桶无法直接访问的问题
+    """
+    try:
+        url = s3_client.generate_presigned_url(
+            'get_object',
+            Params={
+                'Bucket': settings.R2_BUCKET_NAME,
+                'Key': object_name
+            },
+            ExpiresIn=expiration
+        )
+        return url
+    except Exception as e:
+        print(f"❌ Generate GET URL Failed: {e}")
+        return None

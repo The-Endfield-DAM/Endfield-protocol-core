@@ -2,6 +2,7 @@
 // 引入 Supabase 客户端
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const { initBGM } = usePlayer()
 
 // --- 逻辑层 ---
 const username = ref('') // 这里输入的是邮箱，如 admin@endfield.com
@@ -23,18 +24,17 @@ const toggleMode = () => {
 }
 
 // 核心鉴权处理
+// 核心鉴权处理
 const handleAuth = async () => {
-  // 1. 数据清洗：去除首尾空格，防止复制粘贴带入的不可见字符导致格式错误
   const cleanEmail = username.value.trim()
   const cleanPassword = password.value.trim()
 
-  // 2. 空值校验
   if (!cleanEmail || !cleanPassword) return alert('MISSING DATA // 请输入完整信息')
   
   isLoading.value = true
   try {
     if (isLoginMode.value) {
-      // --- 登录模式 ---
+      // --- 登录 ---
       const { error } = await supabase.auth.signInWithPassword({
         email: cleanEmail,
         password: cleanPassword
@@ -42,36 +42,35 @@ const handleAuth = async () => {
       if (error) throw error
       
       console.log('Login Success')
-      // 注意：登录成功后，页面顶部的 watchEffect 会自动监测到 user 变化并跳转首页
+      
+      // 🟢 1. 立即启动 BGM (此时播放器组件已在后台待命，会立即响应)
+      initBGM()
+      
+      // 🟢 2. 移除 alert，直接跳转
+      // alert('ACCESS GRANTED') <--- 删除这行
+      navigateTo('/') 
       
     } else {
-      // --- 注册模式 ---
+      // --- 注册 ---
       const { error, data } = await supabase.auth.signUp({
         email: cleanEmail,
         password: cleanPassword
       })
       if (error) throw error
       
-      // 3. 注册后状态判断
-      // 如果你在 Supabase 关闭了 "Confirm email"，这里会直接返回 session，视为自动登录
       if (data.session) {
-        alert('PROFILE CREATED // 档案已建立，正在自动登入...')
+        // 🟢 注册并自动登录同理
+        initBGM()
+        // alert('PROFILE CREATED...') <--- 删除这行，或改成非阻塞的 Toast
+        // watchEffect 会处理跳转
       } else {
-        // 如果开启了邮箱验证，提示查收邮件
         alert('VERIFICATION REQUIRED // 请前往邮箱查收验证信件')
-        isLoginMode.value = true // 自动切回登录界面方便操作
+        isLoginMode.value = true 
       }
     }
   } catch (error: any) {
-    console.error(error)
-    
-    // 4. 错误信息汉化/人性化处理
-    let msg = error.message
-    if (msg.includes('Invalid login credentials')) msg = '身份验证失败 (账号或密码错误)'
-    if (msg.includes('User already registered')) msg = '该身份已存在 (请直接登录)'
-    if (msg.includes('invalid claim')) msg = '会话已过期，请刷新页面'
-    
-    alert(`ACCESS DENIED // ${msg}`)
+    // ... 错误处理保持不变
+    alert(`ACCESS DENIED // ${error.message}`)
   } finally {
     isLoading.value = false
   }

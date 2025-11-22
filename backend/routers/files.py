@@ -4,6 +4,7 @@ from sqlmodel import Session,select,desc
 from database import get_session
 from models import File, Profile, Tempop
 from dependencies import get_current_user
+from services.storage import generate_presigned_url
 
 router = APIRouter(
     prefix="/files",
@@ -35,25 +36,30 @@ def create_file_record(
 @router.get("/", response_model=List[File])
 def read_files(
     session: Session = Depends(get_session),
-    # 🟢 current_user 可能是 Profile 也可能是 Tempop
-    current_user: Union[Profile, Tempop] = Depends(get_current_user) 
+    current_user: Union[Profile, Tempop] = Depends(get_current_user)
 ):
     """
-    获取文件列表 (权限分级：管理员看所有，普通用户看自己)
+    获取文件列表 (自动生成临时访问链接)
     """
-    
-    # 1. 检查是否是管理员 (只有 Profile 表里才有 role 字段)
+    # 1. 权限判断 (保持不变)
     is_admin = False
     if isinstance(current_user, Profile) and current_user.role == "admin":
         is_admin = True
 
-    # 2. 分级查询
+    # 2. 查询数据库
     if is_admin:
-        # 管理员：上帝视角
         statement = select(File).order_by(desc(File.created_at))
     else:
-        # 普通用户 (Tempop 或 普通Profile)：只能看自己的
         statement = select(File).where(File.uploader_id == current_user.id).order_by(desc(File.created_at))
         
     results = session.exec(statement).all()
+
+    # 🟢 核心修复：遍历结果，动态生成可访问的 URL
+    # 注意：我们不修改数据库，只修改返回给前端的临时数据
+    for file in results:
+        # 使用 r2_key (例如 uploads/xxx.mp3) 去生成签名链接
+        signed_url = generate_presigned_url(file.r2_key)
+        if signed_url:
+            file.url = signed_url
+            
     return results
