@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const session = useSupabaseSession()
 const config = useRuntimeConfig()
 
 // --- 状态管理 ---
@@ -61,54 +62,66 @@ const triggerSelect = () => {
 }
 
 const startUpload = async (file: File) => {
+  // 🟢 核心修复：提取 Content-Type，确保"获取签名"和"实际上传"时完全一致
+  // 如果文件没有类型，统一默认为二进制流
+  const contentType = file.type || 'application/octet-stream'
+
   try {
-    // --- 阶段 1: 签名 ---
+    // --- 阶段 1: 签名 (获取 R2 上传凭证) ---
     uploadStatus.value = 'signing'
     isUploading.value = true
     progress.value = 0
-    simulateProgress() // 启动动画
+    simulateProgress() // 启动进度条动画
 
+    // 请求后端生成预签名 URL
     const presignedData = await $fetch(`${config.public.apiBase}/upload/presigned`, {
       method: 'POST',
-      body: { filename: file.name, content_type: file.type || 'application/octet-stream' }
+      body: { 
+        filename: file.name, 
+        content_type: contentType // 🟢 使用统一变量
+      }
     }) as any
 
-    // --- 阶段 2: 直传 R2 ---
-    uploadStatus.value = 'uploading' // 进度条开始主跑
+    // --- 阶段 2: 直传 R2 (前端直接传云端) ---
+    uploadStatus.value = 'uploading'
     
     await $fetch(presignedData.upload_url, {
       method: 'PUT',
       body: file,
-      headers: { 'Content-Type': file.type }
+      headers: { 
+        'Content-Type': contentType // 🟢 必须与签名时完全一致，否则 R2 会报错
+      }
     })
 
-    // --- 阶段 3: 录入数据库 (新增状态) ---
-    uploadStatus.value = 'processing' // 进度条进入最后冲刺
+    // --- 阶段 3: 录入数据库 (带身份鉴权) ---
+    uploadStatus.value = 'processing'
     
     await $fetch(`${config.public.apiBase}/files/`, {
       method: 'POST',
+      headers: {
+        // 🔐 鉴权核心：带上 Token，后端才知道是谁传的
+        Authorization: `Bearer ${session.value?.access_token}`
+      },
       body: {
         filename: file.name,
         r2_key: presignedData.file_key,
         url: presignedData.public_url,
         size: file.size,
-        mime_type: file.type,
+        mime_type: contentType, // 🟢 存入数据库的类型也保持一致
         asset_id: null 
       }
     })
 
     // --- 阶段 4: 完成 ---
-    uploadStatus.value = 'success' // 进度条直接满 100%
+    uploadStatus.value = 'success'
     resultUrl.value = presignedData.public_url
 
   } catch (err) {
-    console.error("上传流程崩溃:", err) // 打印详细错误
+    console.error("上传流程异常:", err)
     
-    // 🔴 强制切换为错误状态，这会触发 simulateProgress 里的 clearInterval
+    // 🔴 切换为错误状态，停止动画并显示红色菱形
     uploadStatus.value = 'error' 
     
-    // 🔴 (可选) 如果你想在界面上显示具体错误，可以加一个 alert
-    // alert("上传失败，请检查控制台日志") 
   } finally {
     isUploading.value = false
   }

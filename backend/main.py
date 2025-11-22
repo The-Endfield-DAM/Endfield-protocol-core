@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from config import settings
 from database import create_db_and_tables
-from routers import assets,upload,files
+from routers import assets,upload,files,admin
 
 # --- 生命周期管理 ---
 # 在 App 启动前，自动检查并创建数据库表
@@ -33,6 +33,7 @@ app.add_middleware(
 app.include_router(assets.router)
 app.include_router(upload.router)
 app.include_router(files.router)
+app.include_router(admin.router)
 
 @app.get("/")
 def read_root():

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+// 🟢 必须加上 lang="ts"，否则无法识别 <FileRecord[]> 泛型语法！
+
+// 引入 Session 钩子，用于获取 Token
+const session = useSupabaseSession()
 const config = useRuntimeConfig()
 
 // 定义接口类型
@@ -11,9 +15,26 @@ interface FileRecord {
   created_at: string
 }
 
-// 获取数据
-const { data: files, pending, refresh } = await useFetch<FileRecord[]>('/files/', {
-  baseURL: config.public.apiBase
+// 获取数据 (整合了鉴权和懒加载)
+const { data: files, pending, refresh, error } = await useFetch<FileRecord[]>('/files/', {
+  baseURL: config.public.apiBase,
+  // 注入 Token
+  headers: computed(() => ({
+    Authorization: `Bearer ${session.value?.access_token}`
+  })) as any,
+  // 监听 Session 变化自动刷新
+  watch: [session],
+  
+  // 开启懒加载，防止页面卡死
+  lazy: true,
+  timeout: 60000
+})
+
+// 错误监控
+watch(error, (newErr) => {
+  if (newErr) {
+    console.error('Wiki 数据加载失败:', newErr)
+  }
 })
 </script>
 

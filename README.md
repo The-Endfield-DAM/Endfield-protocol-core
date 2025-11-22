@@ -168,6 +168,25 @@ type: 描述
 
 ## 📅 更新日志 (Changelog)
 
+### [v0.4.0] - Security & Access Control Protocol
+> **Time:** 2025-11-22 17:18
+* **🔐 Authentication System (鉴权核心):**
+    * 实装 **Supabase Auth** 完整流程，支持邮箱/密码登录与注册。
+    * 前端集成 `@nuxtjs/supabase` 模块，实现 Session 状态管理与路由守卫 (Route Guard)。
+    * 新增 **"断开连接 (Logout)"** 功能，侧边栏底部按钮支持根据登录状态智能切换。
+* **🛡️ RBAC & Isolation (权限控制):**
+    * **Data Isolation:** 后端 `GET /files/` 接口实装 JWT Token 校验 (`dependencies.py`)，实现“普通干员仅可见自己文件，管理员可见全局”的数据隔离策略。
+    * **Tempop Protocol:** 重构数据库触发器，新注册用户自动隔离至 `tempop` (临时人员表)，需管理员审批后方可转入 `profiles` (正式干员表)。
+    * **Admin API:** 新增 `routers/admin.py`，提供申请列表查询与人员转正接口。
+* **💄 Login Terminal UI (登录终端):**
+    * 全新设计的沉浸式登录页面 (`/login`)，移除侧边栏干扰，采用全屏独占模式。
+    * **Visual Effects:** 实装 **CSS Mask 物理遮罩** Logo 变色技术，以及基于 SVG Base64 的**噪点粒子渐隐 (Noise Fade)** 动效。
+    * **Interaction:** 优化输入框交互 (`box-sizing` 修复) 与错误反馈机制 (自动清洗空格、人性化报错提示)。
+    * **Responsive:** 登录卡片与 Logo 针对移动端进行了深度适配，保证多端体验一致。
+* **🐛 Stability:**
+    * 修复 `wiki.vue` 在开发环境下因数据库冷启动导致的 `signal timed out` 问题 (超时阈值提升至 60s)。
+    * 解决前端 `useSupabaseClient` 自动导入失效导致的构建错误 (重置 `package.json` 依赖)。
+
 ### [v0.3.2.2] - Mobile UI Polish
 > **Time:** 2025-11-22 03:13
 * **🐛 UI Hotfix:**

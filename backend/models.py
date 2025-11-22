@@ -91,3 +91,13 @@ class Blueprint(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=datetime.now)
 
     creator: Optional[Profile] = Relationship(back_populates="blueprints")
+
+# --- 新增: 临时人员表 (Tempop) ---
+class Tempop(SQLModel, table=True):
+    __tablename__ = "tempop"
+
+    id: UUID = Field(primary_key=True)
+    email: Optional[str] = None
+    code: str
+    status: str = Field(default="pending")
+    applied_at: datetime = Field(default_factory=datetime.now)

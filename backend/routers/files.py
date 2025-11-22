@@ -2,7 +2,8 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session,select,desc
 from database import get_session
-from models import File, Profile  # 确保引入了 File 模型
+from models import File, Profile
+from dependencies import get_current_user
 
 router = APIRouter(
     prefix="/files",
@@ -26,11 +27,20 @@ def create_file_record(file_record: File, session: Session = Depends(get_session
         raise HTTPException(status_code=500, detail=f"Database Error: {str(e)}")
 
 @router.get("/", response_model=List[File])
-def read_files(session: Session = Depends(get_session)):
+def read_files(
+    session: Session = Depends(get_session),
+    current_user: Profile = Depends(get_current_user) # 🔐 强制要求登录
+):
     """
-    获取所有已上传的文件档案 (按时间倒序)
+    获取文件列表 (已实现权限隔离)
     """
-    # 按 created_at 倒序排列，最新的在最上面
-    statement = select(File).order_by(desc(File.created_at))
+    # 1. 如果是管理员，查看所有文件
+    if current_user.role == "admin":
+        statement = select(File).order_by(desc(File.created_at))
+    
+    # 2. 如果是普通干员，只查看自己的文件
+    else:
+        statement = select(File).where(File.uploader_id == current_user.id).order_by(desc(File.created_at))
+        
     results = session.exec(statement).all()
     return results
