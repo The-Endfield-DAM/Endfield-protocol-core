@@ -176,85 +176,39 @@
 .mobile-only { display: none !important; }
 
 
+/* frontend/assets/css/layout.css */
+
+/* ... (保留上方所有代码) ... */
+
+
 /* =========================================
-   📱 移动端适配 (Max Width 768px)
+   📱 移动端横屏 - 战术缩放 (Tactical Zoom)
    ========================================= */
-@media (max-width: 768px) {
-  .desktop-only { display: none !important; }
-  .mobile-only { display: flex !important; }
-
-  /* 1. 布局改为纵向 */
-  .layout-container {
-    flex-direction: column;
-    background-size: 20px 20px;
+/* 触发条件：设备处于横屏模式 (landscape) 且 屏幕宽度小于 1024px (平板/手机) */
+@media screen and (orientation: landscape) and (max-width: 1024px) {
+  
+  /* 🟢 核心修改：增加 :not(.auth-mode) 过滤器 */
+  /* 只有当 body/container 没有 auth-mode 类时，才应用缩放 */
+  .layout-container:not(.auth-mode) {
+    /* 1. 设定缩放基点 */
+    transform-origin: top left;
+    
+    /* 2. 核心缩放 */
+    transform: scale(0.8);
+    
+    /* 3. 尺寸补偿 */
+    width: 125vw;
+    height: 125vh;
+    
+    overflow: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
   }
 
-  /* 2. 移动端顶部栏 */
-  .mobile-header {
-    height: 60px;
-    background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-light);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-  }
-
-  /* 同步 Logo 样式 */
-  .mobile-header .logo-icon {
-    width: 32px;  
-    height: 32px;
-    background-color: var(--c-brand);
-    margin-right: 12px;
-    -webkit-mask-image: url('/images/prtslogo.png');
-    mask-image: url('/images/prtslogo.png');
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-
-    transform: translateY(15px); 
-    flex-shrink: 0; /* 防止被挤压变形 */
-  }
-
-  /* 3. 内容区避让顶部和底部 */
-  .main-content {
-    padding-top: 60px;
-    padding-bottom: 80px;
-    width: 100%;
-  }
-
-  /* 4. 底部导航栏 */
-  .mobile-tab-bar {
-    height: 64px;
-    background: #111;
-    border-top: 1px solid var(--c-brand);
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.8);
-  }
-
-  .tab-item {
-    color: var(--text-sub);
-    padding: 10px;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .tab-item.active {
-    color: #000;
-    background-color: var(--c-brand);
-    transform: translateY(-10px);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  /* 🟢 可选：针对登录页的特殊处理 (确保它不缩放，占满屏幕) */
+  .layout-container.auth-mode {
+    transform: none;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto; /* 登录页允许滚动，防止键盘遮挡 */
   }
 }

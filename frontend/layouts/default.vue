@@ -30,7 +30,7 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <div class="layout-container">
+  <div class="layout-container" :class="{ 'auth-mode': isAuthPage }">
     <div v-if="!isAuthPage" class="bg-decoration">ENDFIELD</div>
 
     <aside v-show="!isAuthPage" class="sidebar desktop-only">

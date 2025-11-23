@@ -1,7 +1,7 @@
 /* frontend/assets/css/login.css */
 
 .login-page {
-  /* --- 核心变量 --- */
+  /* --- Core Variables --- */
   --c-brand: #FFD700;
   --bg-base: #0A0A0A;
   --bg-card: #020202;
@@ -11,23 +11,41 @@
   --font-sans: 'Roboto', 'Segoe UI', sans-serif;
   --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   
-  /* 噪点纹理 (Base64 SVG) */
+  /* Noise Texture */
   --noise-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
 
-  height: 100vh;
-  width: 100vw;
+  /* --- Layout Fixes --- */
+  position: fixed !important; 
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 9999 !important;
+  
   background-color: #1a1a1a;
   background-image: 
       linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
+  
+  /* 允许垂直滚动，防止小屏内容截断 */
+  overflow-y: auto !important;
+  
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  
   color: var(--text-main);
+}
+
+/* 弹性垫片：使用 vh 单位实现动态挤压，保证 Logo 不会死板地贴在顶上 */
+.login-page::before,
+.login-page::after {
+  content: '';
+  display: block;
+  flex: 1;
+  /* 最小保留 20px 间距，平时占据 5% 的屏幕高度 */
+  min-height: clamp(20px, 5vh, 60px); 
 }
 
 /* 背景水印 */
@@ -41,49 +59,65 @@
 
 /* Logo 区域 */
 .logo-area {
-  margin-bottom: 30px; 
+  /* 动态间距：屏幕越矮，Logo 离卡片越近 */
+  margin-bottom: clamp(15px, 4vh, 30px);
+  
   display: flex; flex-direction: column; align-items: center;
   z-index: 1; 
   animation: fadeInDown 0.8s var(--transition-smooth);
   filter: drop-shadow(0 0 15px rgba(208, 0, 0, 0.6));
+  
+  /* 禁止压缩 Logo 区域 */
+  flex-shrink: 0;
 }
 
 .industrial-logo {
-  width: 70px; 
-  height: 50px; 
+  /* 🟢 核心修复：流体尺寸 */
+  /* 高度在 50px 到 100px 之间，根据屏幕高度(vh)自动缩放 */
+  height: clamp(50px, 15vh, 100px);
+  
+  /* 宽度自动计算，锁定比例 160:100 */
+  width: auto;
+  aspect-ratio: 160 / 100;
+  
+  /* 统一使用警示红，杜绝变色 */
   background-color: #D00000;
   
   -webkit-mask-image: url('/images/deco.e59de0.png');
   mask-image: url('/images/deco.e59de0.png');
-  
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-
-  transform: translateX(-8px);
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
 }
 
 /* 登录卡片 */
 .login-card {
   width: 100%; max-width: 420px;
   background: var(--bg-card);
-  padding: 60px 40px 160px 40px; 
+  
+  /* 动态内边距：屏幕越矮，卡片越紧凑 */
+  padding-top: clamp(30px, 6vh, 60px);
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: clamp(100px, 15vh, 160px);
+  
   border-radius: 2px;
   box-shadow: 0 40px 80px rgba(0,0,0,0.9);
   position: relative;
   z-index: 2;
   border: 1px solid #1a1a1a; border-bottom: none;
   animation: cardEnter 0.8s var(--transition-smooth) 0.2s backwards;
+  
+  /* 确保卡片本身不被压缩 */
+  flex-shrink: 0;
 }
 
 /* 粒子渐隐层 */
 .card-fade-overlay {
   position: absolute;
   top: auto; bottom: -1px; left: -1px; right: -1px;
-  height: 240px;
+  /* 渐隐层高度也随卡片动态调整 */
+  height: clamp(180px, 35%, 240px);
   pointer-events: none; z-index: 5;
   background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
@@ -99,7 +133,7 @@
 }
 
 /* 表单元素 */
-.input-group { margin-bottom: 30px; position: relative; z-index: 10; }
+.input-group { margin-bottom: clamp(20px, 3vh, 30px); position: relative; z-index: 10; }
 
 .input-label {
   display: block; font-family: var(--font-sans); font-size: 12px; color: var(--text-sub);
@@ -107,34 +141,23 @@
 }
 
 .input-field {
-  width: 100%; 
-  background: rgba(255,255,255,0.03); 
-  border: 1px solid #333; 
-  border-radius: 999px;
-  padding: 12px 20px; 
-  color: var(--text-main); 
-  font-family: var(--font-mono); 
-  font-size: 16px;
-  outline: none; 
-  transition: all 0.3s;
-  
-  /* 🟢 核心修复：添加 box-sizing 防止宽度溢出 */
-  box-sizing: border-box;
+  width: 100%; box-sizing: border-box;
+  background: rgba(255,255,255,0.03); border: 1px solid #333; border-radius: 999px;
+  padding: 12px 20px; color: var(--text-main); font-family: var(--font-mono); font-size: 16px;
+  outline: none; transition: all 0.3s;
 }
-
 .input-field:focus { 
-  border-color: var(--c-brand); 
-  background: rgba(0,0,0,0.5); 
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.1) inset; 
+  border-color: var(--c-brand); background: var(--bg-card); 
+  box-shadow: 0 0 0 1px var(--c-brand), 0 0 10px rgba(255, 215, 0, 0.4); 
 }
 
 /* 按钮 */
 .btn-container {
   position: absolute;
-  bottom: 50px; 
+  /* 按钮位置随底部 padding 动态调整，始终保持在渐隐区的合适位置 */
+  bottom: clamp(35px, 6vh, 50px); 
   left: 50%; transform: translateX(-50%);
-  z-index: 20; 
-  display: flex; flex-direction: column; align-items: center;
+  z-index: 20; display: flex; flex-direction: column; align-items: center;
 }
 
 .diamond-btn {
@@ -160,7 +183,7 @@
 
 /* 底部切换按钮 */
 .switch-mode {
-  margin-top: 40px;
+  margin-top: clamp(20px, 4vh, 40px);
   font-family: var(--font-mono); font-size: 12px; color: var(--text-sub);
   cursor: pointer; transition: color 0.3s; z-index: 10; letter-spacing: 2px;
 }
@@ -170,43 +193,12 @@
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes cardEnter { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
+/* 📱 移动端特别修正：不需要额外的缩放逻辑了，clamp 已经处理好了 */
 @media (max-width: 768px) {
-  /* 1. 卡片适配：留出呼吸空间 */
   .login-card {
-    width: 80%; /* 左右留出边距，不再贴边 */
-    padding: 40px 20px 135px 20px; /* 减小内边距，增加内容展示区 */
-    box-shadow: 0 20px 50px rgba(0,0,0,0.9); /* 调整阴影 */
+    width: 90%; /* 仅调整宽度占比 */
+    max-width: none;
   }
-
-  /* 2. Logo 缩小：防止喧宾夺主 */
-  .industrial-logo {
-    width: 120px;
-    height: 75px;
-  }
-  
-  .logo-area {
-    margin-bottom: 20px; /* 拉近与卡片的距离 */
-  }
-
-  /* 3. 背景字调整 */
-  .bg-watermark {
-    font-size: 18vw; /* 稍微减小 */
-    letter-spacing: -2px;
-  }
-
-  /* 4. 按钮微调 */
-  .btn-container {
-    bottom: 40px; /* 稍微上提 */
-  }
-  
-  .diamond-btn {
-    width: 56px; /* 稍微缩小按钮尺寸 */
-    height: 56px;
-  }
-  
-  /* 5. 底部文字防止贴底 */
-  .switch-mode {
-    margin-top: 30px;
-    padding-bottom: 20px; /* 增加底部安全区 */
-  }
+  /* 字体微调 */
+  .bg-watermark { font-size: 15vw; }
 }
