@@ -168,131 +168,14 @@ type: 描述
 
 ## 📅 更新日志 (Changelog)
 
-### [v0.4.1.0] - Access & Media Patch
-> **Time:** 2025-11-23 01:31
-*   **🔗 Data Binding & Permission (数据绑定与权限松绑):**
-    *   **功能:** 实现普通用户 (Tempop) 与正式干员 (Profile) 的文件上传归属绑定，确保“谁传的谁能看”。
-    *   **方法:** 移除数据库 files 表对 profiles 的外键强约束；后端 POST /files/ 接口自动从 Token 解析并绑定 uploader_id；鉴权依赖 (dependencies.py) 升级为支持多表身份查询。
-*   **🎵 Secure Media Stream (安全媒体流):**
-    *   **功能:** 修复 R2 私有存储桶音频无法播放的问题 (403 Forbidden)。
-    *   **方法:** 后端新增 Presigned GET URL 生成逻辑，在返回文件列表时动态将被动地址替换为带签名的临时访问链接。
-*   **🎧 Seamless Playback & Auto-Play (无缝播放体验):**
-    *   **功能:** 实现登录/注册后 BGM 自动播放，且切换页面不中断。
-    *   **方法:**
-        *   重构布局 (default.vue) 使用 v-show 替代 v-if 以维持播放器组件活性。
-        *   移除登录页阻塞式 alert，确保用户点击事件能直接触发 audio.play()。
-        *   优化 SidebarPlayer 组件的 load() 重载机制，解决切歌无声问题。
-*   **💄 UI Polish (界面微调):**
-    *   **功能:** 优化侧边栏播放器在收起/展开状态下的布局表现。
-    *   **方法:**
-        *   重写 .mini-player 样式，收起时仅居中显示播放按钮，隐藏文本与光盘图标。
-        *   展开时文本区域平滑滑出 (transition: width/opacity)。
-        *   侧边栏顶部 Logo 布局下移，增加呼吸感。
-*   **⚡ Client-Side Rendering (CSR 优化):**
-    *   **功能:** 彻底解决 Wiki 页面刷新时的 401/403 报错与水合不匹配问题。
-    *   **方法:** 对鉴权强相关页面 (wiki.vue) 强制禁用 SSR (server: false)，并使用 onRequest 拦截器动态注入 Token。
+当前版本：**v0.4.1.0** (Access & Media Patch)
 
-### [v0.4.0] - Security & Access Control Protocol
-> **Time:** 2025-11-22 17:18
-* **🔐 Authentication System (鉴权核心):**
-    * 实装 **Supabase Auth** 完整流程，支持邮箱/密码登录与注册。
-    * 前端集成 `@nuxtjs/supabase` 模块，实现 Session 状态管理与路由守卫 (Route Guard)。
-    * 新增 **"断开连接 (Logout)"** 功能，侧边栏底部按钮支持根据登录状态智能切换。
-* **🛡️ RBAC & Isolation (权限控制):**
-    * **Data Isolation:** 后端 `GET /files/` 接口实装 JWT Token 校验 (`dependencies.py`)，实现“普通干员仅可见自己文件，管理员可见全局”的数据隔离策略。
-    * **Tempop Protocol:** 重构数据库触发器，新注册用户自动隔离至 `tempop` (临时人员表)，需管理员审批后方可转入 `profiles` (正式干员表)。
-    * **Admin API:** 新增 `routers/admin.py`，提供申请列表查询与人员转正接口。
-* **💄 Login Terminal UI (登录终端):**
-    * 全新设计的沉浸式登录页面 (`/login`)，移除侧边栏干扰，采用全屏独占模式。
-    * **Visual Effects:** 实装 **CSS Mask 物理遮罩** Logo 变色技术，以及基于 SVG Base64 的**噪点粒子渐隐 (Noise Fade)** 动效。
-    * **Interaction:** 优化输入框交互 (`box-sizing` 修复) 与错误反馈机制 (自动清洗空格、人性化报错提示)。
-    * **Responsive:** 登录卡片与 Logo 针对移动端进行了深度适配，保证多端体验一致。
-* **🐛 Stability:**
-    * 修复 `wiki.vue` 在开发环境下因数据库冷启动导致的 `signal timed out` 问题 (超时阈值提升至 60s)。
-    * 解决前端 `useSupabaseClient` 自动导入失效导致的构建错误 (重置 `package.json` 依赖)。
+> 本项目处于高频迭代中。
+> 完整更新历史与详细变更记录，请查阅独立档案：
+>
+> 📂 **[CHANGELOG.md](./CHANGELOG.md)**
 
-### [v0.3.2.2] - Mobile UI Polish
-> **Time:** 2025-11-22 03:13
-* **🐛 UI Hotfix:**
-    * **Vertical Stacking:** 强制移动端首页标题与筛选 Tabs 上下分行，修复文本重叠问题。
-    * **Touch Target:** 将 Wiki 页面的刷新按钮改为全宽 (Full Width) 布局，避免屏幕边缘截断，并提升触摸体验。
-    * **Spacing:** 增加移动端底部 Padding，防止内容被底部导航栏遮挡。
-
-### [v0.3.2.1] - Mobile Terminal Adaptation
-> **Time:** 2025-11-22 03:00
-* **📱 Responsive Design (移动端适配):**
-    * **Navigation:** 实现 **Sidebar (侧边栏)** 到 **Bottom Tab Bar (底部导航)** 的形态切换，释放移动端水平空间。
-    * **Dashboard:** 优化首页 **Hero Title** 排版，引入自动换行与字号缩放，修复大屏文字截断问题；资产网格在窄屏下自动切换为单列布局。
-    * **Protocol Upload:** 重构上传页布局逻辑，移动端采用 **垂直堆叠 (Vertical Stack)** 模式，彻底修复 PRTS 动画与文字层级重叠、溢出的视觉 Bug。
-    * **Archive Wiki:** 优化文件列表项 (`FileListItem`) 的移动端展示，精简元数据列，适配窄屏阅读体验。
-* **🔧 UX Polish:** 增加全局 `mobile-only` / `desktop-only` 响应式工具类，统一管理多端显隐逻辑。
-
-### [v0.3.2] - Database Ecosystem & Archive Protocol
-> **Time:** 2025-11-22 02:23
-* **🗄️ Database Expansion:**
-    * 实装 **Supabase (PostgreSQL)** 完整架构，新增 `files` (协议档案), `profiles` (干员档案), `audit_logs` (审计日志), `blueprints` (构建蓝图) 表结构。
-    * 优化数据库连接池配置 (`pool_pre_ping`, `keepalives`)，彻底修复 Serverless 环境下的 SSL 解密失败与连接断开问题。
-* **📘 Feature: Industrial Wiki:**
-    * 上线 **"协议档案库" (Wiki)** 模块，实现 R2 云端文件的可视化列表展示与下载。
-    * 后端新增 `GET /files/` 与 `POST /files/` 接口，打通 "上传 -> 录入 -> 展示" 的数据全链路闭环。
-* **🎨 Engineering & UI:**
-    * **CSS Architecture:** 完成前端样式重构，实现 CSS 与 Vue 组件的完全分离 (`wiki.css`, `component.css`)，提升代码可维护性。
-    * **UX Optimization:** 优化上传进度条逻辑，新增 `Processing` (数据库写入) 状态反馈，解决签名阶段进度卡死问题。
-* **🐛 Fixes:**
-    * 修复本地开发环境 `.env` 加载导致的 R2 连接阻塞问题。
-    * 补全路由缺口 (`/editor`, `/settings`)，消除 Vue Router 导航警告。
-
-### [v0.3.1] - Upload Protocol Stabilized
-> **Time:** 2025-11-22 01:25
-* **✅ Verification:** 完成公网环境 (Zeabur Public Network) 下的**全链路上传测试**，确认前端直传 Cloudflare R2 云端链路稳定。
-* **🔧 Hotfix:**
-    * 修复容器运行时因 `DATABASE_URL` 环境变量缺失导致的 `pydantic ValidationError` 崩溃循环。
-    * 修正 `config.py` 与 `main.py` 的代码结构冲突，恢复中间件 (Middleware) 的正确挂载顺序。
-    * 精准配置生产环境 CORS 白名单，彻底解决公网域名下的跨域阻断问题。
-
-### [v0.3.0] - Protocol Transmission Module
-> **Time:** 2025-11-21 23:00
-*   **☁️ Storage:** 集成 **Cloudflare R2** 对象存储，实现后端预签名 (Presigned URL) 鉴权流程。
-*   **📤 Feature:** 新增 **协议上传 (Upload)** 模块，支持文件拖拽与直传云端，绕过后端带宽限制。
-*   **✨ UI/UX:**
-    *   实装 **PRTS 风格** 动态上传监视器 (SVG + CSS Animation)。
-    *   优化状态交互：待机呼吸、上传充能、成功结算动画。
-    *   修复 SVG 层级渲染问题，提升视觉锐度与透明质感。
-
-### [v0.2.2] - Global Deployment & Connectivity
-> **Time:** 2025-11-21 22:10
-*   **🚀 Deployment:** 前后端服务全栈部署至 **Zeabur** (Serverless)，实现公网多端访问。
-*   **🌐 Network:** 配置生产环境 CORS 白名单，打通云端前端 (Zeabur Web) 与后端 (Zeabur API) 的通信链路。
-*   **🔧 Frontend:** 重构 API 调用逻辑，引入 `runtimeConfig` 实现后端地址的动态切换 (自动识别 Local/Prod 环境)。
-*   **📱 Compatibility:** 验证移动端与桌面端响应式布局，工业风 UI 在公网环境下渲染正常。
-
-### [v0.2.1] - Cloud Infrastructure Migration
-> **Time:** 2025-11-21 21:10
-*   **☁️ Database:** 数据库引擎从本地 SQLite 迁移至 **Supabase (PostgreSQL)**，实现云端数据同步。
-*   **🔧 Configuration:** 重构后端配置系统 (`config.py`)，集成 Cloudflare R2 对象存储凭证与云数据库连接串。
-*   **📦 Dependencies:** 新增 `psycopg2-binary` (PG驱动) 与 `boto3` (S3 SDK) 依赖。
-*   **🔒 Security:** 完善环境变量管理，实现敏感密钥与代码库的完全分离。
-
-### [v0.2.0] - UI/UX Protocol Upgrade
-> **Time:** 2025-11-21 19:30
-*   **✨ New Features:**
-    *   引入 **Lucide Vue** 图标库，实现工业风图标系统。
-    *   新增 **"呼吸式" 侧边栏 (Collapsible Sidebar)**，支持鼠标悬停自动展开/收起交互。
-    *   新增 **Dashboard Hero** 区域，增加动态背景纹理与数据看板。
-*   **💄 UI/UX:**
-    *   重构 CSS 变量系统 (Design Tokens)，统一管理品牌色与尺寸。
-    *   优化布局架构，实现沉浸式全屏布局。
-*   **🐛 Bug Fixes:**
-    *   修复 Windows 环境下 Nuxt 路径别名 (`~`) 解析错误。
-    *   解决前端路由在无后端连接时的阻塞问题 (Lazy Fetch)。
-
-### [v0.1.0] - Architecture Genesis
-> **Time:** 2025-11-21 18:10
-*   **🏗️ Architecture:** 完成前后端分离架构搭建 (Nuxt3 + FastAPI)。
-*   **🔙 Backend:** 集成 SQLModel，实现 SQLite 数据库连接与自动建表。
-*   **🔌 API:** 完成 `POST /assets/` (录入) 和 `GET /assets/` (查询) 接口。
-*   **🎨 Frontend:** 完成首页 UI Demo，实现前后端数据联调。
-*   **🔧 DevOps:** 配置 `.npmrc` 加速国内依赖下载，解决 CORS 跨域限制。
+---
 
 <div align="center">
 <br>

@@ -3,25 +3,33 @@ import {
   Activity, UploadCloud, Box, Settings, User, Volume2, Layers, LogOut 
 } from 'lucide-vue-next'
 
+// 引入 usePlayer 用于重置播放器
 const { resetPlayer } = usePlayer()
 const route = useRoute()
 const user = useSupabaseUser() // 获取当前用户信息
 const supabase = useSupabaseClient() // 获取操作客户端
 
+// 🟢 新增：控制模态框显示的状态
+const showLogoutModal = ref(false)
+
 // 判断是否是登录页 (如果是 /login，则不显示侧边栏)
 const isAuthPage = computed(() => route.path === '/login')
 
-// 退出登录逻辑
-const handleLogout = async () => {
-  const confirmLogout = confirm('CONFIRM DISCONNECT? // 确认断开神经连接？')
-  if (!confirmLogout) return
+// 🟢 修改 1：点击退出按钮时，不再直接退出，而是打开模态框
+const handleLogoutClick = () => {
+  showLogoutModal.value = true
+}
 
+// 🟢 修改 2：当模态框动画播完触发此回调，执行真正的退出逻辑
+const onLogoutConfirmed = async () => {
   try {
+    // 1. 清除 Supabase Session
     await supabase.auth.signOut()
     
-    // 🟢 新增：登出时重置播放器，防止脏数据残留
+    // 2. 重置播放器状态 (防止脏数据残留)
     resetPlayer()
     
+    // 3. 跳转回登录页
     navigateTo('/login')
   } catch (error) {
     console.error('Logout failed:', error)
@@ -31,6 +39,7 @@ const handleLogout = async () => {
 
 <template>
   <div class="layout-container" :class="{ 'auth-mode': isAuthPage }">
+    
     <div v-if="!isAuthPage" class="bg-decoration">ENDFIELD</div>
 
     <aside v-show="!isAuthPage" class="sidebar desktop-only">
@@ -63,7 +72,7 @@ const handleLogout = async () => {
       </div>
 
       <div class="bottom-actions">
-        <div v-if="user" class="nav-item" @click="handleLogout">
+        <div v-if="user" class="nav-item" @click="handleLogoutClick">
           <LogOut class="nav-icon" :size="20" />
           <span class="nav-label">断开连接</span>
         </div>
@@ -86,7 +95,7 @@ const handleLogout = async () => {
         <div class="logo-text">END<span style="color: var(--c-brand)">FIELD</span></div>
       </div>
       
-      <div v-if="user" class="mobile-user" @click="handleLogout">
+      <div v-if="user" class="mobile-user" @click="handleLogoutClick">
         <LogOut :size="20" color="var(--text-main)" />
       </div>
       <NuxtLink v-else to="/login" class="mobile-user">
@@ -104,5 +113,10 @@ const handleLogout = async () => {
       <NuxtLink to="/wiki" class="tab-item" active-class="active"><Layers :size="24" /></NuxtLink>
       <NuxtLink to="/settings" class="tab-item" active-class="active"><Settings :size="24" /></NuxtLink>
     </nav>
+
+    <LogoutModal 
+      v-model="showLogoutModal" 
+      @logout-confirmed="onLogoutConfirmed" 
+    />
   </div>
 </template>
