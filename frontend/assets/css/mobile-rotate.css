@@ -1,0 +1,235 @@
+/* frontend/assets/css/mobile-rotate.css */
+
+.mobile-blocker {
+  display: none; /* 默认隐藏 */
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #000; /* 纯黑背景，遮挡一切 */
+  z-index: 9999; /* 最高层级 */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* 终末地背景纹理 */
+  background-image: 
+    linear-gradient(rgba(255, 215, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 215, 0, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.content {
+  color: var(--c-brand);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 手机旋转动画 */
+.icon-wrapper {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--c-brand);
+  border-radius: 50%;
+  margin-bottom: 20px;
+  animation: pulse-border 2s infinite;
+}
+
+.phone-icon {
+  animation: rotate-device 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.title {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.subtitle {
+  color: var(--text-main);
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.decor-line {
+  width: 60px;
+  height: 4px;
+  background: var(--c-brand);
+  margin: 10px 0;
+}
+
+.info {
+  font-size: 10px;
+  color: var(--text-sub);
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+}
+
+/* 关键动画：旋转 90 度 */
+@keyframes rotate-device {
+  0%, 20% { transform: rotate(0deg); }
+  50%, 70% { transform: rotate(90deg); }
+  100% { transform: rotate(90deg); }
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+  70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+
+/* 🟢 核心逻辑：只在“竖屏”且“宽度小于一定值”时显示 */
+@media screen and (orientation: portrait) and (max-width: 1024px) {
+  .mobile-blocker {
+    display: flex;
+  }
+}
+
+.transition-loader {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #090909; /* 比纯黑稍亮一点的工业黑 */
+  z-index: 10000; /* 确保盖住一切，包括阻断层 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 复杂的背景纹理 */
+  background-image: 
+    linear-gradient(rgba(255, 215, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 215, 0, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 60%);
+  background-size: 20px 20px, 20px 20px, 100% 100%;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  max-width: 400px;
+}
+
+/* 登录页同款 Deco 图标 */
+.loader-deco {
+  width: 60px;
+  height: 60px;
+  background-color: var(--c-brand);
+  /* 使用 CSS Mask 引入物理 PNG 图片 */
+  -webkit-mask-image: url('/images/deco.e59de0.png');
+  mask-image: url('/images/deco.e59de0.png');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  margin-bottom: 30px;
+  animation: spin-slow 8s linear infinite;
+}
+
+/* 加载文字 - 带故障效果 */
+.loader-text {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--c-brand);
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+  position: relative;
+}
+/* 简单的故障微动效果 */
+.loader-text::before,
+.loader-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #090909;
+}
+.loader-text::before {
+  left: 2px;
+  text-shadow: -1px 0 red;
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+.loader-text::after {
+  left: -2px;
+  text-shadow: 1px 0 blue;
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+
+/* 进度条容器 */
+.progress-container {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--c-brand);
+  padding: 1px;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 进度条填充 */
+.progress-bar {
+  height: 100%;
+  background: var(--c-brand);
+  width: 0%; /* 初始宽度 */
+  /* 添加条纹效果 */
+  background-image: linear-gradient(
+    45deg, 
+    rgba(0,0,0,0.2) 25%, 
+    transparent 25%, 
+    transparent 50%, 
+    rgba(0,0,0,0.2) 50%, 
+    rgba(0,0,0,0.2) 75%, 
+    transparent 75%, 
+    transparent
+  );
+  background-size: 10px 10px;
+  animation: move-stripes 1s linear infinite;
+  transition: width 0.2s ease-out; /* 平滑过渡 */
+}
+
+/* 进度信息 */
+.progress-info {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-sub);
+}
+.percentage {
+  color: var(--c-brand);
+  font-weight: 700;
+}
+
+/* Vue Transition 淡入淡出动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 动画定义 */
+@keyframes spin-slow { 100% { transform: rotate(360deg); } }
+@keyframes move-stripes { 0% { background-position: 0 0; } 100% { background-position: 10px 0; } }
+
+@keyframes glitch-anim-1 {
+  0% { clip: rect(30px, 9999px, 10px, 0); }
+  50% { clip: rect(80px, 9999px, 90px, 0); }
+  100% { clip: rect(10px, 9999px, 40px, 0); }
+}
+@keyframes glitch-anim-2 {
+  0% { clip: rect(60px, 9999px, 70px, 0); }
+  50% { clip: rect(20px, 9999px, 30px, 0); }
+  100% { clip: rect(90px, 9999px, 100px, 0); }
+}
