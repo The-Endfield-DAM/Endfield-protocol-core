@@ -18,22 +18,23 @@
   background-size: 40px 40px;
 }
 
-/* --- 侧边栏核心 --- */
 .sidebar {
-  width: var(--sidebar-width-collapsed); /* 默认收起宽度 */
+  width: var(--sidebar-width-collapsed);
   background-color: var(--bg-panel);
   border-right: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   z-index: 50;
-  transition: width 0.4s var(--transition-smooth); /* 丝滑伸缩 */
-  overflow: hidden;
+  transition: width 0.4s var(--transition-smooth);
+  overflow: hidden; 
   position: relative;
   box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  padding-top: 30px;
   
-  /* 🟢 核心优化：增加顶部留白，避免Logo顶到头 */
-  padding-top: 32px; 
+  /* 🟢 核心修复 1: 确保侧边栏高度被限制在父容器内，不被撑开 */
+  height: 100%; 
+  max-height: 100%;
 }
 
 /* 鼠标悬停展开 */
@@ -107,6 +108,10 @@
   gap: 8px;
 }
 
+.nav-menu::-webkit-scrollbar {
+  display: none;
+}
+
 .nav-item {
   height: 48px;
   display: flex;
@@ -149,7 +154,10 @@
 .bottom-actions {
   padding-bottom: 20px;
   border-top: 1px solid var(--border-light);
-  padding-top: 10px;
+  /* 🟢 核心修复 3: 防止被压缩 */
+  flex-shrink: 0; 
+  background-color: var(--bg-panel); /* 确保背景不透明，遮挡滚动下来的菜单 */
+  z-index: 2; /* 确保浮在菜单上方 */
 }
 
 /* --- 主内容区 --- */
@@ -187,16 +195,11 @@
 /* 触发条件：设备处于横屏模式 (landscape) 且 屏幕宽度小于 1024px (平板/手机) */
 @media screen and (orientation: landscape) and (max-width: 1024px) {
   
-  /* 🟢 核心修改：增加 :not(.auth-mode) 过滤器 */
-  /* 只有当 body/container 没有 auth-mode 类时，才应用缩放 */
   .layout-container:not(.auth-mode) {
-    /* 1. 设定缩放基点 */
     transform-origin: top left;
-    
-    /* 2. 核心缩放 */
     transform: scale(0.8);
     
-    /* 3. 尺寸补偿 */
+    /* 🟢 尺寸补偿 */
     width: 125vw;
     height: 125vh;
     
@@ -204,11 +207,18 @@
     -webkit-font-smoothing: subpixel-antialiased;
   }
 
-  /* 🟢 可选：针对登录页的特殊处理 (确保它不缩放，占满屏幕) */
-  .layout-container.auth-mode {
-    transform: none;
-    width: 100vw;
-    height: 100vh;
-    overflow: auto; /* 登录页允许滚动，防止键盘遮挡 */
+  /* 🟢 针对横屏超矮屏幕的额外优化 */
+  .sidebar {
+    /* 在横屏下减少留白，把空间留给内容 */
+    padding-top: 10px; 
+  }
+  
+  .logo-area {
+    height: 50px;
+    margin-bottom: 10px;
+  }
+  
+  .bottom-actions {
+    padding-bottom: 10px; /* 减少底部留白 */
   }
 }
