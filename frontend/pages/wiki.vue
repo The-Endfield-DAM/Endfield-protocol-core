@@ -167,7 +167,7 @@ const batchDownload = () => {
       <div v-if="selectedIds.size > 0" class="batch-bar">
         <div class="batch-info">
           <CheckSquare :size="20" />
-          <span>SELECTED: <span class="highlight">{{ selectedIds.size }}</span> ASSETS</span>
+          <span>已选择: <span class="highlight">{{ selectedIds.size }}</span> 文件</span>
         </div>
         <div class="batch-actions">
           <button class="batch-btn download" @click="batchDownload">

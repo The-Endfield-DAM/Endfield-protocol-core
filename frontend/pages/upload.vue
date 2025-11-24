@@ -130,7 +130,7 @@ const triggerSelect = () => {
 <template>
   <div class="upload-page">
     <div class="panel-header">
-      <h1>PROTOCOL_UPLOAD <span class="sub">// 协议传输</span></h1>
+      <h1>UPLOAD <span class="sub">// 协议传输</span></h1>
     </div>
 
     <div class="upload-container">
@@ -149,7 +149,7 @@ const triggerSelect = () => {
           
           <template v-if="isUploading">
             <h3>SYSTEM BUSY</h3>
-            <p>Transmitting Sequence...</p>
+            <p>正在上传...</p>
           </template>
           
           <template v-else-if="uploadStatus === 'success'">
@@ -159,7 +159,7 @@ const triggerSelect = () => {
 
           <template v-else>
             <h3>INITIATE UPLOAD</h3>
-            <p>Drop multiple files or click to browse</p>
+            <p>拖拽或点击选择文件上传</p>
           </template>
         </div>
       </div>
