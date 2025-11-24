@@ -1,10 +1,10 @@
 from typing import List, Union
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session,select,desc
+from sqlmodel import Session, select, desc, col
 from database import get_session
 from models import File, Profile, Tempop
 from dependencies import get_current_user
-from services.storage import generate_presigned_url
+from services.storage import generate_presigned_url, delete_file_from_r2
 
 router = APIRouter(
     prefix="/files",
@@ -15,16 +15,12 @@ router = APIRouter(
 def create_file_record(
     file_record: File, 
     session: Session = Depends(get_session),
-    current_user: Profile = Depends(get_current_user) # 🟢 新增：强制要求登录，并获取当前用户
+    current_user: Union[Profile, Tempop] = Depends(get_current_user)
 ):
     """
-    前端上传 R2 成功后，调用此接口将文件元数据写入数据库
+    前端上传 R2 成功后，写入数据库
     """
-    # 1. (可选) 这里未来可以验证一下 r2_key 是否真的存在于 R2 中
-
-    file_record.uploader_id = current_user.id  # 关联上传用户 
-    
-    # 2. 写入数据库
+    file_record.uploader_id = current_user.id
     try:
         session.add(file_record)
         session.commit()
@@ -39,14 +35,10 @@ def read_files(
     current_user: Union[Profile, Tempop] = Depends(get_current_user)
 ):
     """
-    获取文件列表 (自动生成临时访问链接)
+    获取文件列表 (带权限隔离 + 自动签名)
     """
-    # 1. 权限判断 (保持不变)
-    is_admin = False
-    if isinstance(current_user, Profile) and current_user.role == "admin":
-        is_admin = True
+    is_admin = isinstance(current_user, Profile) and current_user.role == "admin"
 
-    # 2. 查询数据库
     if is_admin:
         statement = select(File).order_by(desc(File.created_at))
     else:
@@ -54,12 +46,75 @@ def read_files(
         
     results = session.exec(statement).all()
 
-    # 🟢 核心修复：遍历结果，动态生成可访问的 URL
-    # 注意：我们不修改数据库，只修改返回给前端的临时数据
     for file in results:
-        # 使用 r2_key (例如 uploads/xxx.mp3) 去生成签名链接
-        signed_url = generate_presigned_url(file.r2_key)
+        signed_url = generate_presigned_url(file.r2_key, file.filename)
         if signed_url:
             file.url = signed_url
             
     return results
+
+@router.delete("/{file_id}")
+def delete_file(
+    file_id: int,
+    session: Session = Depends(get_session),
+    current_user: Union[Profile, Tempop] = Depends(get_current_user)
+):
+    """
+    单文件删除
+    """
+    file_record = session.get(File, file_id)
+    if not file_record:
+        raise HTTPException(status_code=404, detail="File not found")
+
+    is_admin = isinstance(current_user, Profile) and current_user.role == "admin"
+    is_owner = file_record.uploader_id == current_user.id
+    
+    if not (is_admin or is_owner):
+        raise HTTPException(status_code=403, detail="Permission denied")
+
+    try:
+        delete_file_from_r2(file_record.r2_key)
+        session.delete(file_record)
+        session.commit()
+        return {"message": "File deleted"}
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 🟢 新增：批量删除接口
+@router.post("/batch-delete")
+def batch_delete_files(
+    file_ids: List[int],
+    session: Session = Depends(get_session),
+    current_user: Union[Profile, Tempop] = Depends(get_current_user)
+):
+    """
+    批量删除文件 (接收 ID 列表)
+    """
+    # 1. 查询所有目标文件
+    statement = select(File).where(col(File.id).in_(file_ids))
+    files = session.exec(statement).all()
+    
+    if not files:
+        return {"message": "No files found", "deleted_count": 0}
+
+    is_admin = isinstance(current_user, Profile) and current_user.role == "admin"
+    
+    deleted_count = 0
+    
+    try:
+        for file in files:
+            # 权限检查：必须是管理员或文件拥有者
+            if is_admin or file.uploader_id == current_user.id:
+                # 物理删除 R2
+                delete_file_from_r2(file.r2_key)
+                # 标记数据库删除
+                session.delete(file)
+                deleted_count += 1
+        
+        session.commit()
+        return {"message": "Batch delete completed", "deleted_count": deleted_count}
+        
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))

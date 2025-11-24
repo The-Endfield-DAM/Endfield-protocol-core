@@ -1,6 +1,8 @@
 import boto3
 from botocore.config import Config
 import uuid
+import mimetypes               # 🟢 新增：用于猜测文件类型
+from urllib.parse import quote # 🟢 新增：用于文件名 URL 编码
 from config import settings
 import sys
 
@@ -29,7 +31,7 @@ except Exception as e:
 
 def generate_presigned_post(file_name: str, file_type: str):
     """
-    生成上传凭证
+    生成上传凭证 (POST)
     """
     print(f"⚡ [DEBUG] Generating presigned url for: {file_name}")
     try:
@@ -37,7 +39,6 @@ def generate_presigned_post(file_name: str, file_type: str):
         object_name = f"uploads/{unique_name}"
 
         # 3. 向 R2 申请预签名 URL
-        # ⚠️ 如果 endpoint 不对，或者网络不通，这里可能会卡住
         presigned_url = s3_client.generate_presigned_url(
             'put_object',
             Params={
@@ -62,21 +63,56 @@ def generate_presigned_post(file_name: str, file_type: str):
         print(f"❌ [DEBUG] R2 Logic Error: {e}")
         return None
 
-def generate_presigned_url(object_name: str, expiration=3600):
+def generate_presigned_url(object_name: str, original_filename: str = None, expiration=3600):
     """
-    生成临时的下载/访问链接 (GET)
-    解决 R2 私有桶无法直接访问的问题
+    生成下载/访问链接 (GET)
+    🟢 修复中文乱码：如果是文本文件，强制指定 charset=utf-8
+    🟢 修复下载体验：强制浏览器弹出下载框，并使用正确的文件名
     """
     try:
+        # 1. 猜测文件 MIME 类型
+        content_type, _ = mimetypes.guess_type(object_name)
+        
+        # 2. 构建参数字典
+        params = {
+            'Bucket': settings.R2_BUCKET_NAME,
+            'Key': object_name
+        }
+
+        # 3. 修复中文显示乱码
+        if content_type and ('text' in content_type or 'json' in content_type):
+            params['ResponseContentType'] = f"{content_type}; charset=utf-8"
+        
+        # 4. 强制下载并指定文件名 (解决浏览器直接打开的问题)
+        if original_filename:
+            # 对文件名进行 URL 编码
+            encoded_name = quote(original_filename)
+            # 使用 filename* 语法兼容现代浏览器处理 UTF-8 文件名
+            params['ResponseContentDisposition'] = f"attachment; filename*=UTF-8''{encoded_name}"
+        else:
+            params['ResponseContentDisposition'] = 'attachment'
+        
+        # 5. 生成带参数的签名链接
         url = s3_client.generate_presigned_url(
             'get_object',
-            Params={
-                'Bucket': settings.R2_BUCKET_NAME,
-                'Key': object_name
-            },
+            Params=params,
             ExpiresIn=expiration
         )
         return url
     except Exception as e:
         print(f"❌ Generate GET URL Failed: {e}")
         return None
+
+def delete_file_from_r2(file_key: str):
+    """
+    从 R2 物理删除文件
+    """
+    try:
+        s3_client.delete_object(
+            Bucket=settings.R2_BUCKET_NAME,
+            Key=file_key
+        )
+        return True
+    except Exception as e:
+        print(f"❌ Delete Object Failed: {e}")
+        return False

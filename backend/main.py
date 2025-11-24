@@ -16,6 +16,7 @@ async def lifespan(app: FastAPI):
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://127.0.0.1:3000/login",
     # 如果你有其他的本地开发端口（如 3001），也要加在这里
     "https://endfield-home.zeabur.app"
 ]

@@ -5,137 +5,135 @@ const config = useRuntimeConfig()
 // --- 状态管理 ---
 const fileInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
-const isUploading = ref(false) // 仅代表正在传输中
+const isUploading = ref(false)
 const uploadStatus = ref<'idle' | 'signing' | 'uploading' | 'processing' | 'success' | 'error'>('idle')
 const progress = ref(0)
 const resultUrl = ref('')
 
-// --- ⚡ 模拟进度动画 ---
-const simulateProgress = () => {
+// 新增：批量上传状态
+const totalFiles = ref(0)
+const completedFiles = ref(0)
+
+// --- ⚡ 批量任务调度器 (指挥官) ---
+const handleBatchUpload = async (files: File[]) => {
+  if (files.length === 0) return
+
+  // 1. 初始化状态
+  isUploading.value = true
+  uploadStatus.value = 'signing' // 先进入准备态
   progress.value = 0
-  const interval = setInterval(() => {
-    // 1. 签名阶段 (Signing): 慢速走到 20%
-    if (uploadStatus.value === 'signing') {
-      if (progress.value < 20) {
-        progress.value += 1
-      }
-    } 
-    // 2. 上传阶段 (Uploading): 正常走到 90%
-    else if (uploadStatus.value === 'uploading') {
-      if (progress.value < 90) {
-        progress.value += Math.random() * 5 // 稍微调慢一点，避免大文件一下子这就跑满了
-      }
+  totalFiles.value = files.length
+  completedFiles.value = 0
+  
+  let successCount = 0
+  let failCount = 0
+
+  // 2. 开始循环上传 (串行执行，保证稳定性；如果想快可以用 Promise.all 并发)
+  // 为了动画好看，我们用串行，让进度条慢慢涨
+  uploadStatus.value = 'uploading'
+
+  for (const file of files) {
+    try {
+      // 调用单文件上传逻辑
+      await uploadSingleFile(file)
+      successCount++
+    } catch (e) {
+      console.error(`File ${file.name} failed:`, e)
+      failCount++
+    } finally {
+      completedFiles.value++
+      // 更新总进度 (百分比)
+      progress.value = (completedFiles.value / totalFiles.value) * 100
     }
-    // 3. 处理阶段 (Processing/Database): 走到 99%
-    else if (uploadStatus.value === 'processing') {
-      if (progress.value < 99) {
-        progress.value += 0.5
-      }
+  }
+
+  // 3. 结算
+  isUploading.value = false
+  if (successCount > 0) {
+    uploadStatus.value = 'success'
+    // 如果有失败的，可以在这里提示，或者暂时只显示成功
+    if (failCount > 0) {
+      console.warn(`${failCount} files failed to upload.`)
     }
-    // 4. 成功或失败
-    else if (uploadStatus.value === 'success') {
-      progress.value = 100
-      clearInterval(interval)
-    } else if (uploadStatus.value === 'error') {
-      clearInterval(interval)
-    }
-  }, 100) // 稍微加快刷新频率，看起来更丝滑
+  } else {
+    uploadStatus.value = 'error'
+  }
 }
 
-// --- 核心上传逻辑 ---
+// --- ⚡ 单文件执行者 (士兵) ---
+// 从原来的 startUpload 改造而来，不再控制全局状态，只负责抛出异常或成功
+const uploadSingleFile = async (file: File) => {
+  const contentType = file.type || 'application/octet-stream'
+
+  // 1. 获取签名
+  const presignedData = await $fetch(`${config.public.apiBase}/upload/presigned`, {
+    method: 'POST',
+    body: { 
+      filename: file.name, 
+      content_type: contentType 
+    }
+  }) as any
+
+  // 2. 直传 R2
+  await $fetch(presignedData.upload_url, {
+    method: 'PUT',
+    body: file,
+    headers: { 'Content-Type': contentType }
+  })
+
+  // 3. 录入数据库
+  await $fetch(`${config.public.apiBase}/files/`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${session.value?.access_token}`
+    },
+    body: {
+      filename: file.name,
+      r2_key: presignedData.file_key,
+      url: presignedData.public_url,
+      size: file.size,
+      mime_type: contentType,
+      asset_id: null 
+    }
+  })
+  
+  // 记录最后一个文件的 URL 用于显示（可选）
+  resultUrl.value = presignedData.public_url
+}
+
+// --- 交互事件处理 ---
 const handleFileSelect = async (event: Event) => {
   const input = event.target as HTMLInputElement
-  if (input.files?.[0]) await startUpload(input.files[0])
-  // 重置 input 否则同一个文件不能选两次
+  if (input.files && input.files.length > 0) {
+    // 将 FileList 转为数组
+    const files = Array.from(input.files)
+    await handleBatchUpload(files)
+  }
   if (input) input.value = '' 
 }
 
 const onDrop = async (e: DragEvent) => {
   isDragging.value = false
-  if (isUploading.value) return // 正在传的时候禁止拖拽
-  if (e.dataTransfer?.files[0]) await startUpload(e.dataTransfer.files[0])
+  if (isUploading.value) return
+  
+  if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+    const files = Array.from(e.dataTransfer.files)
+    await handleBatchUpload(files)
+  }
 }
 
-// 点击触发 (如果正在传则无效)
 const triggerSelect = () => {
   if (!isUploading.value) fileInput.value?.click()
-}
-
-const startUpload = async (file: File) => {
-  // 🟢 核心修复：提取 Content-Type，确保"获取签名"和"实际上传"时完全一致
-  // 如果文件没有类型，统一默认为二进制流
-  const contentType = file.type || 'application/octet-stream'
-
-  try {
-    // --- 阶段 1: 签名 (获取 R2 上传凭证) ---
-    uploadStatus.value = 'signing'
-    isUploading.value = true
-    progress.value = 0
-    simulateProgress() // 启动进度条动画
-
-    // 请求后端生成预签名 URL
-    const presignedData = await $fetch(`${config.public.apiBase}/upload/presigned`, {
-      method: 'POST',
-      body: { 
-        filename: file.name, 
-        content_type: contentType // 🟢 使用统一变量
-      }
-    }) as any
-
-    // --- 阶段 2: 直传 R2 (前端直接传云端) ---
-    uploadStatus.value = 'uploading'
-    
-    await $fetch(presignedData.upload_url, {
-      method: 'PUT',
-      body: file,
-      headers: { 
-        'Content-Type': contentType // 🟢 必须与签名时完全一致，否则 R2 会报错
-      }
-    })
-
-    // --- 阶段 3: 录入数据库 (带身份鉴权) ---
-    uploadStatus.value = 'processing'
-    
-    await $fetch(`${config.public.apiBase}/files/`, {
-      method: 'POST',
-      headers: {
-        // 🔐 鉴权核心：带上 Token，后端才知道是谁传的
-        Authorization: `Bearer ${session.value?.access_token}`
-      },
-      body: {
-        filename: file.name,
-        r2_key: presignedData.file_key,
-        url: presignedData.public_url,
-        size: file.size,
-        mime_type: contentType, // 🟢 存入数据库的类型也保持一致
-        asset_id: null 
-      }
-    })
-
-    // --- 阶段 4: 完成 ---
-    uploadStatus.value = 'success'
-    resultUrl.value = presignedData.public_url
-
-  } catch (err) {
-    console.error("上传流程异常:", err)
-    
-    // 🔴 切换为错误状态，停止动画并显示红色菱形
-    uploadStatus.value = 'error' 
-    
-  } finally {
-    isUploading.value = false
-  }
 }
 </script>
 
 <template>
   <div class="upload-page">
     <div class="panel-header">
-      <h1>UPLOAD <span class="sub">// 协议传输</span></h1>
+      <h1>PROTOCOL_UPLOAD <span class="sub">// 协议传输</span></h1>
     </div>
 
     <div class="upload-container">
-      <!-- 左侧：拖拽区域 -->
       <div 
         class="drop-zone" 
         :class="{ 'dragging': isDragging, 'disabled': isUploading, 'success': uploadStatus === 'success' }"
@@ -144,34 +142,30 @@ const startUpload = async (file: File) => {
         @drop.prevent="onDrop"
         @click="triggerSelect"
       >
-        <input type="file" ref="fileInput" @change="handleFileSelect" hidden />
+        <input type="file" ref="fileInput" @change="handleFileSelect" hidden multiple />
+        
         <div class="zone-content">
           <div class="upload-icon"></div>
           
-          <!-- 状态：上传中 -->
           <template v-if="isUploading">
             <h3>SYSTEM BUSY</h3>
-            <p>Transmitting Data...</p>
+            <p>Transmitting Sequence...</p>
           </template>
           
-          <!-- 状态：成功 (允许再次上传) -->
           <template v-else-if="uploadStatus === 'success'">
-            <h3 style="color: var(--c-success)">UPLOAD COMPLETE</h3>
-            <p>Click to upload another file</p>
+            <h3 style="color: var(--c-success)">BATCH COMPLETE</h3>
+            <p>Ready for next transmission</p>
           </template>
 
-          <!-- 状态：空闲 -->
           <template v-else>
             <h3>INITIATE UPLOAD</h3>
-            <p>拖拽文件到上传框或点击选择文件上传</p>
+            <p>Drop multiple files or click to browse</p>
           </template>
         </div>
       </div>
 
-      <!-- 右侧：PRTS 核心系统 -->
       <div class="monitor-wrapper">
         
-        <!-- A. 待机状态 (呼吸菱形) -->
         <div v-if="uploadStatus === 'idle'" class="idle-monitor">
           <div class="idle-diamond-wrap">
             <div class="idle-diamond"></div>
@@ -180,28 +174,20 @@ const startUpload = async (file: File) => {
           <div class="idle-text">WAITING...</div>
         </div>
 
-        <!-- B. 工作状态 (PRTS 动画) -->
         <transition name="fade-scale">
           <div v-if="uploadStatus !== 'idle'" class="prts-core">
             
-            <!-- 背景巨大的水印字 -->
             <div class="bg-watermark">
               <span>P</span><span>R</span><span>T</span><span>S</span>
             </div>
 
-            <!-- 旋转菱形容器 -->
             <div class="diamond-shifter">
               <svg class="diamond-svg" viewBox="0 0 300 300">
-                <!-- 1. 先画内部填充 (放在底层) -->
-                <!-- 调整了 x, y 和宽高，让它稍微缩进一点点，完全被边框包裹 -->
                 <rect x="12" y="12" width="276" height="276" class="diamond-fill" 
                       :style="{ height: `${progress}%` }" />
-                
-                <!-- 2. 后画白色外框 (放在顶层，遮住填充边缘) -->
                 <rect x="5" y="5" width="290" height="290" class="diamond-border" />
               </svg>
               
-              <!-- 中心内容 -->
               <div class="core-text">
                 <template v-if="uploadStatus === 'success'">
                   <div class="success-title">UPLOAD</div>
@@ -212,7 +198,9 @@ const startUpload = async (file: File) => {
                 </template>
                 <template v-else>
                   <div class="progress-val">{{ Math.floor(progress) }}%</div>
-                  <div class="status-text">SYNCING...</div>
+                  <div class="status-text">
+                    SYNCING ({{ completedFiles }}/{{ totalFiles }})...
+                  </div>
                 </template>
               </div>
             </div>

@@ -1,0 +1,86 @@
+/* frontend/assets/css/delete-modal.css */
+
+.delete-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6); /* 稍微加深背景遮罩 */
+  backdrop-filter: blur(2px);
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+}
+
+.delete-box {
+  width: 320px;
+  background: #0A0000; /* 极深红黑 */
+  border: 2px solid #FF4D4F; /* 荧光红 */
+  box-shadow: 0 0 30px rgba(255, 77, 79, 0.3), inset 0 0 20px rgba(255, 77, 79, 0.1);
+  padding: 30px 20px;
+  text-align: center;
+  position: relative;
+  /* 无扫描线 */
+}
+
+.delete-title {
+  color: #FF4D4F;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 77, 79, 0.6);
+}
+
+.delete-info {
+  color: #FFF;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  margin-bottom: 30px;
+  opacity: 0.8;
+}
+
+.delete-actions {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+/* 符号按钮样式 */
+.symbol-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.symbol-btn.cancel {
+  color: var(--text-sub);
+  border-color: var(--text-sub);
+}
+.symbol-btn.cancel:hover {
+  color: #FFF;
+  border-color: #FFF;
+  transform: scale(1.1);
+}
+
+.symbol-btn.confirm {
+  color: #FF4D4F;
+  border-color: #FF4D4F;
+}
+.symbol-btn.confirm:hover {
+  background: #FF4D4F;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 77, 79, 0.6);
+  transform: scale(1.1) rotate(15deg); /* 确认时稍微旋转 */
+}
+
+/* 简单的入场动画 */
+.pop-enter-active, .pop-leave-active { transition: all 0.2s; }
+.pop-enter-from, .pop-leave-to { opacity: 0; transform: scale(0.9); }
