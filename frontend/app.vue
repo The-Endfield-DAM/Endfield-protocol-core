@@ -2,6 +2,8 @@
   <div>
     <MobileRotate />
     
+    <SystemToast />
+    
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

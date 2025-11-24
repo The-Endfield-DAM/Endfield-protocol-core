@@ -1,0 +1,110 @@
+/* frontend/assets/css/profile-card.css */
+
+.profile-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  padding: 30px;
+  display: flex;
+  gap: 30px;
+  position: relative;
+  /* overflow: hidden;  <-- 🔴 移除，否则相机按钮的阴影会被切掉 */
+  margin-bottom: 40px;
+}
+
+.relative-container { position: relative; }
+
+/* 左侧头像 */
+.avatar-frame {
+  width: 100px; height: 100px;
+  border: 2px solid var(--c-brand); padding: 4px;
+  position: relative;
+  overflow: hidden; /* 确保扫描线在内部 */
+}
+.avatar-img {
+  width: 100%; height: 100%; object-fit: cover; background: #000;
+}
+.scan-line {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: rgba(255, 215, 0, 0.5);
+  animation: scan 3s linear infinite; pointer-events: none;
+}
+
+/* 🟢 新增：右下角相机按钮 */
+.camera-btn {
+  position: absolute;
+  bottom: -10px; right: -10px; /* 悬挂在边框外 */
+  background: var(--c-brand); color: #000;
+  border: 2px solid var(--bg-card); /* 增加一圈描边使其与背景分离 */
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); /* 弹性动画 */
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.camera-btn:hover:not(:disabled) { transform: scale(1.15) rotate(-10deg); }
+.camera-btn:active:not(:disabled) { transform: scale(0.95); }
+.camera-btn:disabled { opacity: 0.5; cursor: wait; }
+
+
+/* 右侧信息 */
+.card-right { flex: 1; display: flex; flex-direction: column; justify-content: center; z-index: 1; }
+
+/* 可编辑行 */
+.info-row.main { border-bottom: 1px solid var(--border-light); padding-bottom: 15px; margin-bottom: 15px; }
+.code-wrapper { display: flex; flex-direction: column; }
+
+/* 展示模式 */
+.code-display { display: flex; align-items: center; gap: 10px; }
+.info-row.main .code {
+  font-size: 32px; font-weight: 900; color: var(--text-main);
+  font-family: var(--font-mono); letter-spacing: 2px; display: block; margin-top: 5px;
+}
+
+/* 行内编辑器 */
+.inline-editor { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+.edit-input.code-input {
+  flex: 1; max-width: 200px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--c-brand); color: var(--text-main);
+  font-family: var(--font-mono); font-size: 20px; font-weight: bold;
+  padding: 4px 8px; outline: none;
+}
+.editor-actions { display: flex; gap: 5px; }
+
+/* 迷你操作按钮 */
+.mini-btn {
+  background: transparent; border: 1px solid var(--border-light);
+  color: var(--text-sub); padding: 6px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px;
+}
+.mini-btn:hover:not(:disabled) { border-color: var(--c-brand); color: var(--c-brand); }
+.mini-btn:disabled { opacity: 0.5; }
+/* 特定颜色的按钮 */
+.mini-btn.save:hover:not(:disabled) { border-color: var(--c-success); color: var(--c-success); }
+.mini-btn.cancel:hover:not(:disabled) { border-color: var(--c-danger); color: var(--c-danger); }
+
+
+/* 信息网格 (保持不变) */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 20px; }
+.info-item { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); }
+.info-item .icon { color: var(--text-sub); }
+.info-item .label { font-size: 10px; color: var(--text-sub); margin-right: 5px; }
+.info-item .value { font-size: 14px; color: var(--text-main); font-weight: 600; }
+.value.admin { color: var(--c-brand); }
+.value.operator { color: var(--c-success); }
+
+/* 背景装饰 */
+.bg-text {
+  position: absolute; right: -10px; bottom: -20px; font-size: 100px; font-weight: 900;
+  color: rgba(255, 255, 255, 0.03); pointer-events: none; font-family: var(--font-sans);
+}
+@keyframes scan { 0% { top: 0; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+@media (max-width: 768px) {
+  .profile-card { flex-direction: column; align-items: center; text-align: center; }
+  .info-grid { justify-content: center; }
+  /* 移动端调整相机按钮位置 */
+  .camera-btn { bottom: -5px; right: -5px; width: 28px; height: 28px; }
+  .code-display, .inline-editor { justify-content: center; }
+}

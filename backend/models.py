@@ -102,5 +102,9 @@ class Tempop(SQLModel, table=True):
     id: UUID = Field(primary_key=True)
     email: Optional[str] = None
     code: str
+    
+    # 🟢 新增：允许临时用户拥有头像
+    avatar_url: Optional[str] = None
+    
     status: str = Field(default="pending")
     applied_at: datetime = Field(default_factory=datetime.now)

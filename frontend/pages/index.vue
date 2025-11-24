@@ -20,7 +20,6 @@ const { data: assets, pending, error } = await useFetch<Asset[]>('/assets/', {
 
 <template>
   <div class="dashboard-page">
-    <!-- 模仿官网的 Hero 区域 -->
     <div class="hero-section">
       <div class="hero-content">
         <h1 class="hero-title">ENDFIELD<br>INDUSTRIAL<br>SYSTEM</h1>

@@ -34,5 +34,8 @@ export default defineNuxtConfig({
     fileURLToPath(new URL('./assets/css/home.css', import.meta.url)), 
     fileURLToPath(new URL('./assets/css/mobile-rotate.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/logout-modal.css', import.meta.url)),
+    fileURLToPath(new URL('./assets/css/settings.css', import.meta.url)),
+    fileURLToPath(new URL('./assets/css/profile-card.css', import.meta.url)),
+    fileURLToPath(new URL('./assets/css/toast.css', import.meta.url))
   ]
 })
