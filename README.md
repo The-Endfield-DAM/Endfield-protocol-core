@@ -5,7 +5,7 @@
 ### // 终末地 · 集成工业协议核心 / 资产管理终端
 
 > 🔴 **Live Demo:** [https://endfield-home.zeabur.app](https://endfield-home.zeabur.app)  
-> *(部署于 Zeabur 硅谷节点，数据实时同步)*
+> *(部署于 Zeabur 硅谷节点，数据实时同步)(本项目是粉丝向二创，仅供学习交流，如有缺陷，多多指点)*
 
 <!-- Status Badges -->
 
@@ -18,7 +18,7 @@
 基于《明日方舟：终末地》世界观扩展设计，构建一个集 **3D 资产管理 / 实时监控 / 蓝图交互** 为一体的现代化工业 Web 平台。
 </p>
 
-<p><i>Last Updated: 2025-11-23 01:31 (ChengDu)</i></p>
+<p><i>Last Updated: 2025-11-25 21:33 (ChengDu)</i></p>
 
 </div>
 

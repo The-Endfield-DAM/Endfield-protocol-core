@@ -7,6 +7,21 @@ All notable changes to the **Endfield Industrial Protocol Core** project will be
 
 ## 📅 更新日志 (Changelog)
 
+### [v0.4.5.1] - Personnel Center & Safety Protocol
+> **Time:** 2025-11-25 21:32
+*   **🪪 Personnel Terminal (个人终端重构):**
+    *   **Personal Dossier:** 新增档案组件。
+    *   **Smart Editing:** 重构 ProfileCard。
+    *   **Routing:** 重构 Settings 路由结构。
+*   **🛡️ Security Protocol (安全协议):**
+    *   **Safety Page:** 上线终端安全设置页面。
+    *   **Core Functions:** 实装 **密码重置 (Password Reset)** 与 **通讯频段重定向 (Email Re-bind)** 功能，对接 Supabase Auth API。
+    *   **Data Sync:** 数据库新增触发器，实现 `auth.users` 与业务表邮箱数据的实时同步。
+*   **👮 Admin Command (管理指挥体系):**
+    *   **Audit Center:** 独立 **干员审批中心**页面，实装分页查询。
+    *   **Visual Differentiation:** 针对 **Admin**与 **Operator**设计了差异化的系统状态面板。
+    *   **Logic Update:** 审批通过后，干员将自动归入 "基建工程部" 并保留所有档案数据。
+
 ### [v0.4.4.0] - Mass Transmission & Purge Protocol
 > **Time:** 2025-11-24 19:50
 *   **📦 Batch Operations (大宗操作协议):**

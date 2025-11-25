@@ -1,0 +1,150 @@
+/* frontend/assets/css/admin-audit.css */
+
+.audit-panel {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-light);
+    margin-top: 20px;
+}
+
+/* 表头 */
+.audit-header {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr 100px;
+    /* 4列布局 */
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-light);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-sub);
+    letter-spacing: 1px;
+}
+
+/* 列表项 */
+.audit-item {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr 100px;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-main);
+    transition: background 0.2s;
+}
+
+.audit-item:hover {
+    background: rgba(255, 215, 0, 0.05);
+}
+
+.audit-item:last-child {
+    border-bottom: none;
+}
+
+/* 字段样式 */
+.col-code {
+    font-family: var(--font-mono);
+    font-weight: bold;
+    color: var(--c-brand);
+}
+
+.col-email {
+    font-family: var(--font-sans);
+    opacity: 0.8;
+}
+
+.col-date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-sub);
+}
+
+/* 批准按钮 */
+.approve-btn {
+    background: transparent;
+    border: 1px solid var(--c-success);
+    color: var(--c-success);
+    padding: 6px 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.approve-btn:hover:not(:disabled) {
+    background: var(--c-success);
+    color: #000;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+.approve-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 分页栏 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    border-top: 1px solid var(--border-light);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-sub);
+}
+
+.page-btn {
+    background: none;
+    border: none;
+    color: var(--text-main);
+    cursor: pointer;
+    padding: 5px;
+}
+
+.page-btn:disabled {
+    color: var(--text-sub);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.page-btn:hover:not(:disabled) {
+    color: var(--c-brand);
+}
+
+/* 空状态 */
+.empty-list {
+    padding: 40px;
+    text-align: center;
+    color: var(--text-sub);
+    font-family: var(--font-mono);
+    font-style: italic;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .audit-header {
+        display: none;
+    }
+
+    /* 手机隐藏表头 */
+    .audit-item {
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+    }
+
+    .col-email,
+    .col-date {
+        grid-column: 1 / -1;
+        font-size: 12px;
+    }
+
+    .col-action {
+        grid-column: 2;
+        grid-row: 1;
+    }
+}

@@ -1,0 +1,163 @@
+/* frontend/assets/css/safety.css */
+
+.safety-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* 顶部装饰条 */
+.safety-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: repeating-linear-gradient(45deg,
+            var(--c-brand),
+            var(--c-brand) 10px,
+            transparent 10px,
+            transparent 20px);
+    opacity: 0.5;
+}
+
+.panel-section {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px dashed var(--border-light);
+}
+
+.panel-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* 🟢 核心修复：增加 .safety-panel 前缀，限定作用域 */
+.safety-panel .section-header {
+    display: flex;
+    align-items: flex-start;
+    /* 顶部对齐 */
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.safety-panel .section-icon {
+    color: var(--c-brand);
+    margin-top: 2px;
+    /* 微调对齐 */
+    flex-shrink: 0;
+}
+
+/* 🟢 核心修复：只改变安全面板里的标题布局，不影响主页面的横向标题 */
+.safety-panel .section-title {
+    display: flex;
+    flex-direction: column;
+    /* 纵向排列：标题在上，说明在下 */
+}
+
+.safety-panel .section-title h2 {
+    font-size: 18px;
+    color: var(--text-main);
+    margin: 0;
+    font-family: var(--font-mono);
+    letter-spacing: 1px;
+    line-height: 1.2;
+}
+
+.safety-panel .section-title p {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin: 4px 0 0 0;
+}
+
+/* 表单样式 */
+.form-group {
+    margin-bottom: 20px;
+    max-width: 400px;
+}
+
+.input-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.safety-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-light);
+    padding: 12px 15px;
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    outline: none;
+    transition: all 0.3s;
+}
+
+.safety-input:focus {
+    border-color: var(--c-brand);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+}
+
+/* 按钮组 */
+.action-row {
+    margin-top: 30px;
+}
+
+.cyber-btn {
+    background: var(--c-brand);
+    color: #000;
+    border: none;
+    padding: 10px 25px;
+    font-family: var(--font-mono);
+    font-weight: bold;
+    cursor: pointer;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cyber-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cyber-btn:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+
+.cyber-btn.danger {
+    background: var(--c-danger);
+    color: #FFF;
+}
+
+/* 提示框 */
+.info-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 188, 212, 0.05);
+    border-left: 3px solid #00BCD4;
+    color: #00BCD4;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .safety-panel {
+        padding: 20px;
+        border: none;
+    }
+
+    .form-group {
+        max-width: 100%;
+    }
+}
