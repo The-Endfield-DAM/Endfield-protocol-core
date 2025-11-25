@@ -12,12 +12,17 @@ class Profile(SQLModel, table=True):
     avatar_url: Optional[str] = None
     role: str = Field(default="operator")
     department: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.now)
-
-    # 关联关系
-    # 🔴 核心修复：注释掉 files 关联，因为 File 表的外键已经移除了
-    # files: List["File"] = Relationship(back_populates="uploader")
     
+    # 🟢 新增字段
+    email: Optional[str] = None
+    gender: Optional[str] = None
+    age: Optional[int] = None
+    address: Optional[str] = None
+    bio: Optional[str] = None
+    
+    created_at: datetime = Field(default_factory=datetime.now)
+    
+    # ... (关系定义保持不变)
     blueprints: List["Blueprint"] = Relationship(back_populates="creator")
     logs: List["AuditLog"] = Relationship(back_populates="operator")
 
@@ -102,9 +107,13 @@ class Tempop(SQLModel, table=True):
     id: UUID = Field(primary_key=True)
     email: Optional[str] = None
     code: str
-    
-    # 🟢 新增：允许临时用户拥有头像
     avatar_url: Optional[str] = None
+    
+    # 🟢 新增字段 (与 Profile 保持一致)
+    gender: Optional[str] = None
+    age: Optional[int] = None
+    address: Optional[str] = None
+    bio: Optional[str] = None
     
     status: str = Field(default="pending")
     applied_at: datetime = Field(default_factory=datetime.now)

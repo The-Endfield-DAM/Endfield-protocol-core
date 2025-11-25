@@ -1,0 +1,225 @@
+/* frontend/assets/css/personal-dossier.css */
+
+.dossier-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    margin-top: 40px;
+    position: relative;
+}
+
+.dossier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--border-light);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.dossier-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-main);
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dossier-body {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+/* 表单项 */
+.form-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+}
+
+.label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-sub);
+    text-transform: uppercase;
+}
+
+/* 展示态的值 */
+.value-display {
+    font-size: 16px;
+    color: var(--text-main);
+    font-weight: 500;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border-light);
+    min-height: 40px;
+}
+
+.value-display.empty {
+    color: var(--text-sub);
+    font-style: italic;
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+/* 编辑态的输入框 */
+.edit-input,
+.edit-textarea {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--c-brand);
+    color: var(--text-main);
+    padding: 10px;
+    font-family: var(--font-sans);
+    outline: none;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.edit-input:focus,
+.edit-textarea:focus {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+    background: rgba(255, 215, 0, 0.05);
+}
+
+/* 🟢 核心修复：移除数字输入框的上下箭头 (Spin Buttons) */
+/* Chrome, Safari, Edge, Opera */
+.edit-input[type="number"]::-webkit-outer-spin-button,
+.edit-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+.edit-input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* 简介 (Bio) 独占一行 */
+.form-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.edit-textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.6;
+}
+
+/* 操作按钮 */
+.action-btn {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--text-sub);
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn:hover {
+    border-color: var(--c-brand);
+    color: var(--c-brand);
+}
+
+.action-btn.save {
+    color: var(--c-success);
+    border-color: var(--c-success);
+}
+
+.action-btn.save:hover {
+    background: rgba(74, 222, 128, 0.1);
+}
+
+.action-btn.cancel {
+    color: var(--c-danger);
+    border-color: var(--c-danger);
+}
+
+.action-btn.cancel:hover {
+    background: rgba(255, 77, 79, 0.1);
+}
+
+.edit-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* 自定义下拉菜单 */
+.custom-select-container {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+}
+
+.select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+}
+
+.dropdown-icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--c-brand);
+}
+
+.dropdown-icon.rotate {
+    transform: rotate(180deg);
+}
+
+.select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #000;
+    border: 1px solid var(--c-brand);
+    border-top: none;
+    z-index: 50;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+}
+
+.select-option {
+    padding: 12px 10px;
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    transition: all 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.select-option:last-child {
+    border-bottom: none;
+}
+
+.select-option:hover,
+.select-option.active {
+    background: rgba(255, 215, 0, 0.1);
+    color: var(--c-brand);
+    padding-left: 15px;
+}
+
+.dropdown-slide-enter-active,
+.dropdown-slide-leave-active {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top center;
+}
+
+.dropdown-slide-enter-from,
+.dropdown-slide-leave-to {
+    opacity: 0;
+    transform: scaleY(0);
+}
+
+@media (max-width: 768px) {
+    .dossier-body {
+        gap: 20px;
+        padding: 20px;
+    }
+}

@@ -23,17 +23,18 @@ const isAdmin = computed(() => userInfo.value?.role === 'admin')
 <template>
   <div class="settings-page">
     <div class="page-header">
-      <h1>SETTINGS <span class="sub">// 个人终端</span></h1>
+      <h1>SYSTEM_SETTINGS <span class="sub">// 个人终端</span></h1>
     </div>
 
     <div v-if="pending" class="loading">LOADING USER DATA...</div>
     <div v-else-if="error" class="error">DATA CORRUPTED: {{ error.message }}</div>
 
-    <div v-else class="content-area">
+    <div v-else-if="userInfo" class="content-area">
       <ProfileCard :user="userInfo" @refresh="refresh()" />
 
+      <PersonalDossier :user="userInfo" @refresh="refresh()" />
+
       <div class="admin-section">
-        
         <template v-if="isAdmin">
           <div class="section-title">
             <h2>ADMIN_CONSOLE</h2>
@@ -71,16 +72,8 @@ const isAdmin = computed(() => userInfo.value?.role === 'admin')
             </div>
           </div>
         </template>
-
       </div>
 
-      <div class="common-section">
-        <div class="section-title"><h2>CONNECTION</h2></div>
-        <div class="setting-item">
-          <span>Current Session ID</span>
-          <code class="session-id">{{ session?.user?.id }}</code>
-        </div>
-      </div>
     </div>
   </div>
 </template>

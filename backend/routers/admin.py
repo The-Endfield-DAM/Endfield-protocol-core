@@ -24,21 +24,27 @@ def approve_operator(user_id: UUID, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Application not found")
 
     # B. 创建正式档案 (Profile)
-    # 生成正式干员代号 (把 APP-xxxx 变成 OP-xxxx)
     official_code = applicant.code.replace("APP", "OP")
     
     new_profile = Profile(
         id=applicant.id,
         code=official_code,
-        role="operator", # 默认为普通干员，你也可以改成 admin
-        department="新进人员",
-        avatar_url="https://ui-avatars.com/api/?name=OP&background=random"
+        role="operator", 
+        department="新进人员", # 默认部门
+        
+        # 🟢 核心升级：数据完整迁移
+        email=applicant.email,
+        avatar_url=applicant.avatar_url,
+        gender=applicant.gender,
+        age=applicant.age,
+        address=applicant.address,
+        bio=applicant.bio
     )
 
     try:
-        # C. 事务操作：写入 Profile -> 删除 Tempop -> 提交
+        # C. 事务操作
         session.add(new_profile)
-        session.delete(applicant) # 从临时表移除
+        session.delete(applicant)
         session.commit()
         return {"message": f"Operator {official_code} approved successfully."}
         

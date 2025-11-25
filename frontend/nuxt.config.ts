@@ -23,7 +23,7 @@ export default defineNuxtConfig({
       apiBase: 'http://127.0.0.1:8000'
     }
   },
-  
+
   css: [
     fileURLToPath(new URL('./assets/css/variables.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/layout.css', import.meta.url)),
@@ -31,12 +31,13 @@ export default defineNuxtConfig({
     fileURLToPath(new URL('./assets/css/upload.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/wiki.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/login.css', import.meta.url)),
-    fileURLToPath(new URL('./assets/css/home.css', import.meta.url)), 
+    fileURLToPath(new URL('./assets/css/home.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/mobile-rotate.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/logout-modal.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/settings.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/profile-card.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/toast.css', import.meta.url)),
-    fileURLToPath(new URL('./assets/css/delete-modal.css', import.meta.url))
+    fileURLToPath(new URL('./assets/css/delete-modal.css', import.meta.url)),
+    fileURLToPath(new URL('./assets/css/personal-dossier.css', import.meta.url))
   ]
 })
