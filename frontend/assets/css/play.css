@@ -1,0 +1,320 @@
+/* frontend/assets/css/play.css */
+
+.play-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    overflow: hidden;
+    background: var(--bg-base);
+}
+
+.player-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 左右等宽，左侧放封面 */
+    gap: 60px;
+    height: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* --- 左侧：纯净封面 --- */
+.visual-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.album-cover-box.large {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1;
+    background: #000;
+    border: 1px solid var(--border-light);
+    position: relative;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    /* 增强阴影 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.album-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cover-overlay {
+    position: absolute;
+    color: var(--text-sub);
+    opacity: 0.5;
+}
+
+/* --- 右侧：控制与信息 --- */
+.control-side {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-top: 20px;
+    overflow: hidden;
+    /* 关键：防止内部滚动撑破容器 */
+}
+
+/* 头部信息 */
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+.track-info {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.track-title {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1.2;
+    margin-bottom: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.track-artist {
+    font-size: 18px;
+    color: var(--c-brand);
+    font-family: var(--font-mono);
+}
+
+/* 🟢 歌词区域 (嵌入式) */
+.lyrics-box.embedded {
+    flex: 1;
+    /* 占据剩余空间 */
+    background: transparent;
+    border-left: 2px solid var(--border-light);
+    margin-bottom: 30px;
+    padding-left: 20px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 150px;
+    /* 最小高度 */
+}
+
+.lyrics-content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    /* 字号加大 */
+    line-height: 2;
+    color: var(--text-main);
+    white-space: pre-wrap;
+    /* 蒙版效果：上下渐隐 */
+    mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+}
+
+/* 隐藏滚动条 */
+.lyrics-content-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.trans-btn.floating {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    padding: 4px 8px;
+    color: var(--text-sub);
+    cursor: pointer;
+}
+
+.trans-btn.active {
+    color: var(--c-brand);
+    border-color: var(--c-brand);
+}
+
+/* 进度条 */
+.progress-area {
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+.time-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 10px;
+}
+
+.seek-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    cursor: pointer;
+}
+
+.seek-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--c-brand);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.seek-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.5);
+}
+
+/* 控制按钮 */
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+    flex-shrink: 0;
+}
+
+.ctrl-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ctrl-btn:hover {
+    color: var(--c-brand);
+    transform: scale(1.1);
+}
+
+.ctrl-btn.main {
+    width: 60px;
+    height: 60px;
+    background: var(--c-brand);
+    color: #000;
+    border-radius: 50%;
+}
+
+.ctrl-btn.main:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.ctrl-btn.mode-btn {
+    color: var(--text-sub);
+}
+
+.ctrl-btn.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* 播放列表 (紧凑版) */
+.playlist.compact {
+    height: 150px;
+    /* 固定高度 */
+    flex-shrink: 0;
+    overflow-y: auto;
+    border-top: 1px solid var(--border-light);
+}
+
+.playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.playlist-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.playlist-item.active {
+    color: var(--c-brand);
+    background: rgba(255, 215, 0, 0.05);
+    border-left: 2px solid var(--c-brand);
+}
+
+.item-idx {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    opacity: 0.5;
+    width: 20px;
+}
+
+.item-title {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.item-artist {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-left: auto;
+}
+
+/* 上传入口按钮 */
+.upload-entry-btn {
+    background: transparent;
+    border: 1px solid var(--c-brand);
+    color: var(--c-brand);
+    padding: 8px 16px;
+    font-family: var(--font-mono);
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.upload-entry-btn:hover {
+    background: var(--c-brand);
+    color: #000;
+}
+
+@media (max-width: 1024px) {
+    .player-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .visual-side {
+        display: none;
+    }
+
+    /* 手机端隐藏封面 */
+    .lyrics-box.embedded {
+        flex: 1;
+        min-height: 200px;
+    }
+}

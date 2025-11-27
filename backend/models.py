@@ -48,10 +48,9 @@ class File(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     
+    # ... (asset_id, uploader_id 等保持不变) ...
     asset_id: Optional[int] = Field(default=None, foreign_key="asset.id")
-    
-    # 🟢 这里的 foreign_key 已经移除，允许存储 Tempop ID
-    uploader_id: Optional[UUID] = Field(default=None) 
+    uploader_id: Optional[UUID] = Field(default=None)
     
     filename: str
     r2_key: str
@@ -60,10 +59,13 @@ class File(SQLModel, table=True):
     mime_type: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.now)
 
-    # 关联对象
+    # 🟢 新增：音乐专属元数据 (默认均为 None，不影响其他文件)
+    artist: Optional[str] = None
+    cover_r2_key: Optional[str] = None
+    lyrics_r2_key: Optional[str] = None
+
+    # ... (Relationships 保持不变) ...
     asset: Optional[Asset] = Relationship(back_populates="files")
-    # 🟢 这里的反向关联也已移除
-    # uploader: Optional[Profile] = Relationship(back_populates="files")
 
 
 # --- 4. 审计日志 (AuditLog) ---

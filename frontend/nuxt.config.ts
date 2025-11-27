@@ -40,6 +40,7 @@ export default defineNuxtConfig({
     fileURLToPath(new URL('./assets/css/delete-modal.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/personal-dossier.css', import.meta.url)),
     fileURLToPath(new URL('./assets/css/admin-audit.css', import.meta.url)),
-    fileURLToPath(new URL('./assets/css/safety.css', import.meta.url))
+    fileURLToPath(new URL('./assets/css/safety.css', import.meta.url)),
+    fileURLToPath(new URL('./assets/css/play.css', import.meta.url))
   ]
 })

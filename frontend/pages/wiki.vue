@@ -12,6 +12,9 @@ interface FileRecord {
   size: number
   url: string
   created_at: string
+  artist?: string
+  cover_r2_key?: string
+  lyrics_r2_key?: string
 }
 
 // --- 数据获取 ---
@@ -147,7 +150,7 @@ const batchDownload = () => {
     <div v-if="pending" class="loading-state">[ CONNECTING TO NEURAL NETWORK... ]</div>
     <div v-else-if="!files || files.length === 0" class="empty-state">[ NO DATA ENTRIES FOUND ]</div>
 
-    <div v-else class="file-list">
+<div v-else class="file-list">
       <FileListItem
         v-for="file in files"
         :key="file.id"
@@ -158,6 +161,11 @@ const batchDownload = () => {
         :url="file.url"
         :date="file.created_at"
         :selected="selectedIds.has(file.id)"
+        
+        :artist="file.artist"
+        :cover-url="file.cover_r2_key"
+        :lyric-url="file.lyrics_r2_key"
+        
         @toggle-select="toggleSelect(file.id)"
         @delete="openDeleteModal(file)" 
       />

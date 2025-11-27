@@ -1,5 +1,5 @@
-from typing import List, Union
-from fastapi import APIRouter, Depends, HTTPException
+from typing import List, Union, Optional
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select, desc, col
 from database import get_session
 from models import File, Profile, Tempop
@@ -32,25 +32,50 @@ def create_file_record(
 @router.get("/", response_model=List[File])
 def read_files(
     session: Session = Depends(get_session),
-    current_user: Union[Profile, Tempop] = Depends(get_current_user)
+    current_user: Union[Profile, Tempop] = Depends(get_current_user),
+    # 🟢 新增：支持按 MIME 类型前缀过滤 (例如传 'audio/' 只查音频)
+    mime_type_prefix: Optional[str] = Query(None, description="Filter files by MIME type prefix")
 ):
     """
-    获取文件列表 (带权限隔离 + 自动签名)
+    获取文件列表 (支持权限隔离 + 类型筛选 + 自动签名)
     """
-    is_admin = isinstance(current_user, Profile) and current_user.role == "admin"
+    # 1. 基础查询
+    statement = select(File)
 
-    if is_admin:
-        statement = select(File).order_by(desc(File.created_at))
-    else:
-        statement = select(File).where(File.uploader_id == current_user.id).order_by(desc(File.created_at))
+    # 2. 权限过滤
+    is_admin = isinstance(current_user, Profile) and current_user.role == "admin"
+    if not is_admin:
+        # 普通用户只能看自己的
+        statement = statement.where(File.uploader_id == current_user.id)
+    
+    # 🟢 3. 类型过滤 (核心新增)
+    if mime_type_prefix:
+        statement = statement.where(File.mime_type.startswith(mime_type_prefix))
+
+    # 4. 排序
+    statement = statement.order_by(desc(File.created_at))
         
     results = session.exec(statement).all()
 
+    # 5. 动态生成 URL
     for file in results:
+        # 签名主文件
         signed_url = generate_presigned_url(file.r2_key, file.filename)
         if signed_url:
             file.url = signed_url
-            
+        
+        # 🟢 新增：签名封面图
+        if file.cover_r2_key:
+            signed_cover = generate_presigned_url(file.cover_r2_key)
+            if signed_cover:
+                file.cover_r2_key = signed_cover # 暂时把 URL 塞回 key 字段传给前端
+        
+        # 🟢 新增：签名歌词文件
+        if file.lyrics_r2_key:
+            signed_lyric = generate_presigned_url(file.lyrics_r2_key)
+            if signed_lyric:
+                file.lyrics_r2_key = signed_lyric
+
     return results
 
 @router.delete("/{file_id}")
@@ -81,7 +106,6 @@ def delete_file(
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
-# 🟢 新增：批量删除接口
 @router.post("/batch-delete")
 def batch_delete_files(
     file_ids: List[int],
@@ -89,9 +113,8 @@ def batch_delete_files(
     current_user: Union[Profile, Tempop] = Depends(get_current_user)
 ):
     """
-    批量删除文件 (接收 ID 列表)
+    批量删除文件
     """
-    # 1. 查询所有目标文件
     statement = select(File).where(col(File.id).in_(file_ids))
     files = session.exec(statement).all()
     
@@ -104,11 +127,8 @@ def batch_delete_files(
     
     try:
         for file in files:
-            # 权限检查：必须是管理员或文件拥有者
             if is_admin or file.uploader_id == current_user.id:
-                # 物理删除 R2
                 delete_file_from_r2(file.r2_key)
-                # 标记数据库删除
                 session.delete(file)
                 deleted_count += 1
         

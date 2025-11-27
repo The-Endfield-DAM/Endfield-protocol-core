@@ -137,3 +137,10 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Pytest & Allure 缓存
+.pytest_cache/
+allure-results/
+allure-report/
+__pycache__/
+*.pyc
