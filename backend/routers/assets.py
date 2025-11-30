@@ -1,3 +1,7 @@
+# 待改动
+# 此模块为早期开发时验证云端连通性的代码，目前已暂停使用
+# 未来可能扩展此代码
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from typing import List

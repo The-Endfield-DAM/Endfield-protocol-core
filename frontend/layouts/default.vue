@@ -51,7 +51,7 @@ const onLogoutConfirmed = async () => {
       <nav class="nav-menu">
         <NuxtLink to="/" class="nav-item" active-class="active">
           <Activity class="nav-icon" :size="20" />
-          <span class="nav-label">资产监控</span>
+          <span class="nav-label">首页</span>
         </NuxtLink>
         <NuxtLink to="/upload" class="nav-item" active-class="active">
           <UploadCloud class="nav-icon" :size="20" />

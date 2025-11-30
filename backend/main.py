@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from config import settings
 from database import create_db_and_tables
-from routers import assets, upload, files, admin, users
+from routers import assets, upload, files, admin, users, stats, activities
 
 # --- 生命周期管理 ---
 @asynccontextmanager
@@ -42,6 +42,8 @@ app.include_router(upload.router)
 app.include_router(files.router)
 app.include_router(admin.router)
 app.include_router(users.router)
+app.include_router(stats.router)
+app.include_router(activities.router)
 
 @app.get("/")
 def read_root():

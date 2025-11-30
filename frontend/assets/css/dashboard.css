@@ -1,0 +1,151 @@
+/* frontend/assets/css/dashboard.css */
+
+/* 网格背景 */
+.dashboard-page {
+    min-height: 100vh;
+    background:
+        linear-gradient(0deg, rgba(255, 215, 0, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 215, 0, 0.02) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-color: #0a0a0a;
+}
+
+/* Hero 区域 */
+.hero-section {
+    min-height: 350px;
+    background: linear-gradient(135deg, #111 0%, #1a1a1a 50%, #111 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 60px 40px;
+    overflow: hidden;
+    border-bottom: 2px solid var(--c-brand);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: repeating-linear-gradient(45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 215, 0, 0.03) 10px,
+            rgba(255, 215, 0, 0.03) 11px);
+    z-index: 1;
+}
+
+.hero-content {
+    z-index: 2;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 0 0 15px 0;
+    color: #fff;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.hero-subtitle {
+    color: var(--c-brand);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+/* 系统状态栏 */
+.system-status-bar {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-sub);
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c-success);
+    box-shadow: 0 0 10px var(--c-success);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* 内容区域 */
+.content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px;
+}
+
+/* 模块网格 */
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+/* 活动日志容器 */
+.activity-section {
+    margin-top: 40px;
+}
+
+/* 移动端适配 */
+@media (max-width: 1024px) {
+    .module-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 40px 24px;
+        min-height: 280px;
+    }
+
+    .hero-title {
+        font-size: 36px;
+    }
+
+    .system-status-bar {
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .content-wrapper {
+        padding: 40px 24px;
+    }
+}

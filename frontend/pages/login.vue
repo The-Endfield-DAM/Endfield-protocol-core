@@ -24,7 +24,6 @@ const toggleMode = () => {
 }
 
 // 核心鉴权处理
-// 核心鉴权处理
 const handleAuth = async () => {
   const cleanEmail = username.value.trim()
   const cleanPassword = password.value.trim()
